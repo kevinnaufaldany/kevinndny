@@ -5,13 +5,32 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #222222;
+    background-color: #FFFFFF;
   }
 }
 
-/* Outlined typography signature (as seen in motion reference) */
+/* Lenis Smooth Scroll Configuration */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Outlined typography signature (as seen in motion & Aeonik reference) */
 .text-outline {
-  -webkit-text-stroke: 1.5px #111111;
+  -webkit-text-stroke: 1.5px #222222;
   color: transparent;
 }
 
@@ -26,7 +45,7 @@
   pointer-events: none;
   font-weight: 900;
   letter-spacing: -0.05em;
-  opacity: 0.04;
+  opacity: 0.035;
 }
 
 /* Hide scrollbar for clean horizontal filters */
