@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 import { projectsData } from '@/data/projects';
+import { Project } from '@/types';
+import { fetchProjectBySlug } from '@/services/portfolioService';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
@@ -10,12 +12,16 @@ import { fadeInUp, staggerContainer } from '@/lib/motion';
 
 export const CaseStudyPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-
-  const projectIndex = projectsData.findIndex((p) => p.slug === slug);
-  const project = projectsData[projectIndex];
+  const initialProject = projectsData.find((p) => p.slug === slug);
+  const [project, setProject] = useState<Project | undefined>(initialProject);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (slug) {
+      fetchProjectBySlug(slug).then((data) => {
+        if (data) setProject(data);
+      });
+    }
   }, [slug]);
 
   if (!project) {
@@ -30,6 +36,7 @@ export const CaseStudyPage: React.FC = () => {
     );
   }
 
+  const projectIndex = projectsData.findIndex((p) => p.slug === slug);
   const nextProject = projectsData[(projectIndex + 1) % projectsData.length];
 
   return (
@@ -43,7 +50,7 @@ export const CaseStudyPage: React.FC = () => {
       <Navbar isCaseStudy />
 
       <main className="pt-28 pb-24 px-6 sm:px-8 max-w-7xl mx-auto">
-        {/* Project Header Two-Column Hero (Matching Video Frame 19) */}
+        {/* Project Header Two-Column Hero */}
         <motion.div 
           variants={staggerContainer}
           initial="hidden"
@@ -153,7 +160,7 @@ export const CaseStudyPage: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        {/* Narrative & Editorial Presentation (Matching Frame 20) */}
+        {/* Narrative & Editorial Presentation */}
         <div className="py-16 space-y-16">
           {/* Main Showcase Hero Image */}
           <div className="rounded-3xl overflow-hidden shadow-card border border-brand-border">
@@ -220,3 +227,5 @@ export const CaseStudyPage: React.FC = () => {
     </motion.div>
   );
 };
+
+export default CaseStudyPage;

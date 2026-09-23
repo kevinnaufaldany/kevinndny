@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { experiencesData } from '@/data/experiences';
+import { Experience } from '@/types';
+import { fetchExperiences } from '@/services/portfolioService';
 import { ExperienceRow } from '@/components/cards/ExperienceRow';
 import { Watermark } from '@/components/ui/Watermark';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { fadeInUp, staggerContainer } from '@/lib/motion';
 
 export const ExperienceSection: React.FC = () => {
+  const [experiences, setExperiences] = useState<Experience[]>(experiencesData);
   const { ref, isInView } = useScrollReveal();
+
+  useEffect(() => {
+    // Dynamic query from Supabase with instant fallback
+    fetchExperiences().then((data) => {
+      if (data && data.length > 0) {
+        setExperiences(data);
+      }
+    });
+  }, []);
 
   return (
     <section id="experience" className="py-20 px-4 sm:px-8 bg-brand-surface border-t border-brand-border/80">
@@ -46,7 +58,7 @@ export const ExperienceSection: React.FC = () => {
             animate={isInView ? "visible" : "hidden"}
             className="divide-y divide-zinc-800/70 mt-2"
           >
-            {experiencesData.map((exp, idx) => (
+            {experiences.map((exp, idx) => (
               <motion.div key={idx} variants={fadeInUp}>
                 <ExperienceRow experience={exp} />
               </motion.div>
@@ -57,3 +69,5 @@ export const ExperienceSection: React.FC = () => {
     </section>
   );
 };
+
+export default ExperienceSection;

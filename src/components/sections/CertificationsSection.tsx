@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Award, ArrowUpRight, CheckCircle2 } from 'lucide-react';
-import { certificationsData } from '@/data/certifications';
+import { certificationsData, Certification } from '@/data/certifications';
+import { fetchCertifications } from '@/services/portfolioService';
 import { SectionWrapper } from '@/components/layout/SectionWrapper';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { fadeInUp, staggerContainer } from '@/lib/motion';
 
 export const CertificationsSection: React.FC = () => {
+  const [certifications, setCertifications] = useState<Certification[]>(certificationsData);
   const { ref, isInView } = useScrollReveal();
-  const professionalCert = certificationsData.find((c) => c.isProfessional);
-  const otherCerts = certificationsData.filter((c) => !c.isProfessional);
+
+  useEffect(() => {
+    // Dynamic query from Supabase with instant fallback
+    fetchCertifications().then((data) => {
+      if (data && data.length > 0) {
+        setCertifications(data);
+      }
+    });
+  }, []);
+
+  const professionalCert = certifications.find((c) => c.isProfessional);
+  const otherCerts = certifications.filter((c) => !c.isProfessional);
 
   return (
     <SectionWrapper id="certifications" className="border-t border-brand-border/80 bg-white">

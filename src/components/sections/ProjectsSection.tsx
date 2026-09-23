@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { projectsData } from '@/data/projects';
+import { Project } from '@/types';
+import { fetchProjects } from '@/services/portfolioService';
 import { ProjectCard } from '@/components/cards/ProjectCard';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { Button } from '@/components/ui/Button';
@@ -10,14 +12,24 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { staggerContainer } from '@/lib/motion';
 
 export const ProjectsSection: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>(projectsData);
   const [activeFilter, setActiveFilter] = useState('All');
   const { ref, isInView } = useScrollReveal();
+
+  useEffect(() => {
+    // Dynamic query from Supabase with instant fallback
+    fetchProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjects(data);
+      }
+    });
+  }, []);
 
   const filterCategories = ['All', 'Real Project', 'Exploration'];
 
   const filteredProjects = activeFilter === 'All'
-    ? projectsData
-    : projectsData.filter((p) => p.category === activeFilter);
+    ? projects
+    : projects.filter((p) => p.category === activeFilter);
 
   return (
     <SectionWrapper id="work" className="border-t border-brand-border/80 bg-white">
