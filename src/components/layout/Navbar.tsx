@@ -22,9 +22,10 @@ export const Navbar: React.FC<NavbarProps> = ({ isCaseStudy = false }) => {
   }, []);
 
   const navLinks = [
-    { name: 'Work', href: '#work', count: '04' },
+    { name: 'Work', href: '#work', count: '06' },
     { name: 'Service', href: '#services', count: '04' },
-    { name: 'Experience', href: '#experience', count: '5y+' },
+    { name: 'Experience', href: '#experience', count: '05' },
+    { name: 'Certifications', href: '#certifications', count: '01' },
     { name: 'Contact', href: '#contact' },
   ];
 

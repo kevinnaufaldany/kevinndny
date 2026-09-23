@@ -8,7 +8,6 @@ interface SocialPillProps {
   className?: string;
 }
 
-// Crisp inline SVGs for brand icons
 const BrandIcons: Record<string, React.FC<{ className?: string }>> = {
   github: ({ className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -23,14 +22,6 @@ const BrandIcons: Record<string, React.FC<{ className?: string }>> = {
       <circle cx="4" cy="4" r="2" />
     </svg>
   ),
-  dribbble: ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94" />
-      <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32" />
-      <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72" />
-    </svg>
-  ),
   instagram: ({ className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -38,12 +29,10 @@ const BrandIcons: Record<string, React.FC<{ className?: string }>> = {
       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
     </svg>
   ),
-  behance: ({ className }) => (
+  email: ({ className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 8h5a3 3 0 0 1 0 6H3V8z" />
-      <path d="M3 14h5.5a3.5 3.5 0 0 1 0 7H3v-7z" />
-      <path d="M15 13a3.5 3.5 0 1 0 6.5 1.5H15" />
-      <path d="M15 9h6" />
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
     </svg>
   )
 };
@@ -62,12 +51,12 @@ export const SocialPill: React.FC<SocialPillProps> = ({
       target="_blank"
       rel="noreferrer noopener"
       className={cn(
-        "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-brand-border text-xs font-medium text-brand-dark hover:border-brand-primary hover:bg-brand-surface hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-subtle",
+        "inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-brand-border text-xs sm:text-sm font-medium text-brand-dark hover:border-brand-primary hover:bg-brand-surface hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-subtle min-w-[130px] justify-start group select-none",
         className
       )}
     >
-      <Icon className="w-3.5 h-3.5 text-brand-secondary group-hover:text-brand-primary transition-colors" />
-      <span>{name}</span>
+      <Icon className="w-4 h-4 text-brand-secondary group-hover:text-brand-primary transition-colors flex-shrink-0" />
+      <span className="font-semibold tracking-tight">{name}</span>
     </a>
   );
 };

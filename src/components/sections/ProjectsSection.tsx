@@ -5,8 +5,9 @@ import { ProjectCard } from '@/components/cards/ProjectCard';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { Button } from '@/components/ui/Button';
 import { SectionWrapper } from '@/components/layout/SectionWrapper';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { fadeInUp, staggerContainer } from '@/lib/motion';
+import { staggerContainer } from '@/lib/motion';
 
 export const ProjectsSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -19,25 +20,16 @@ export const ProjectsSection: React.FC = () => {
     : projectsData.filter((p) => p.category === activeFilter);
 
   return (
-    <SectionWrapper id="work" watermark="PORTFOLIO" className="border-t border-brand-border/80">
+    <SectionWrapper id="work" className="border-t border-brand-border/80 bg-white">
       <div ref={ref}>
-        {/* Section Header & Filter Bar */}
-        <motion.div 
-          variants={fadeInUp}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12"
+        {/* Section Header with PORTFOLIO Watermark Backdrop (Exact Frame 07 Reference Layout) */}
+        <SectionHeader
+          watermark="PORTFOLIO"
+          title="/SELECTED WORK"
+          category="Selected Archives"
         >
-          <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-brand-secondary">
-              Selected Archives
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-brand-dark mt-1">
-              /SELECTED WORK
-            </h2>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-4">
+          {/* Action Row right below title: Filters on Left, View All on Right */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 max-w-6xl mx-auto">
             <FilterPill 
               categories={filterCategories}
               activeCategory={activeFilter}
@@ -46,14 +38,14 @@ export const ProjectsSection: React.FC = () => {
 
             <Button 
               asAnchor
-              href="https://github.com/kevinndny"
+              href="https://github.com/kevinnaufaldany"
               variant="outline"
               className="hidden sm:inline-flex"
             >
               View All Work
             </Button>
           </div>
-        </motion.div>
+        </SectionHeader>
 
         {/* Project Cards 2-Column Grid */}
         <motion.div 
@@ -82,3 +74,5 @@ export const ProjectsSection: React.FC = () => {
     </SectionWrapper>
   );
 };
+
+export default ProjectsSection;
