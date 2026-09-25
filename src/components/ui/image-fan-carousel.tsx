@@ -69,16 +69,16 @@ const ImageLoader: React.FC = () => (
 
 interface Carousel360Props { imagesList?: string[] }
 export const Carousel360: React.FC<Carousel360Props> = ({ imagesList }) => {
+  const images = imagesList && imagesList.length > 0 ? imagesList : DEFAULT_IMAGES;
+  const numImages = images.length;
+  const angleStep = 360 / numImages;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(0);
   const [radius, setRadius] = useState(220);
   const [loadedThumbs, setLoadedThumbs] = useState<boolean[]>(() =>
     images.map(() => false),
   );
-
-  const images = imagesList && imagesList.length > 0 ? imagesList : DEFAULT_IMAGES;
-  const numImages = images.length;
-  const angleStep = 360 / numImages;
 
   const steps = Math.round(rotation / angleStep);
   const centerIndex = ((-steps % numImages) + numImages) % numImages;
