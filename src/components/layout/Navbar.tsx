@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 
@@ -48,7 +47,13 @@ export const Navbar: React.FC<NavbarProps> = ({ isCaseStudy = false }) => {
               </Button>
             </Link>
           ) : (
-            <Badge />
+            <a href="#" className="flex items-center gap-2 group transition-transform duration-200 hover:scale-105" aria-label="Kevin Naufal Dany">
+              <img 
+                src="/assets/logo-kevinndny-rm-bg.png" 
+                alt="Kevin Naufal Dany Logo" 
+                className="h-8 sm:h-9 w-auto object-contain"
+              />
+            </a>
           )}
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Award, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { GlowCard } from '@/components/ui/spotlight-card';
 import { certificationsData, Certification } from '@/data/certifications';
 import { fetchCertifications } from '@/services/portfolioService';
 import { SectionWrapper } from '@/components/layout/SectionWrapper';
@@ -124,9 +125,11 @@ export const CertificationsSection: React.FC = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {otherCerts.map((cert) => (
-            <div
+            <GlowCard
               key={cert.id}
-              className="p-6 rounded-2xl bg-brand-surface border border-brand-border/80 hover:border-brand-primary/40 shadow-subtle hover:shadow-card transition-all duration-300 flex flex-col justify-between"
+              customSize
+              glowColor="zinc"
+              className="p-6 rounded-2xl bg-white border border-brand-border/80 hover:border-brand-primary/40 shadow-subtle hover:shadow-card transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono text-brand-secondary">
@@ -145,13 +148,13 @@ export const CertificationsSection: React.FC = () => {
                 {cert.skills.map((s) => (
                   <span 
                     key={s}
-                    className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-white border border-zinc-200 text-brand-secondary"
+                    className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-zinc-50 border border-zinc-200 text-brand-secondary"
                   >
                     {s}
                   </span>
                 ))}
               </div>
-            </div>
+            </GlowCard>
           ))}
         </motion.div>
       </div>

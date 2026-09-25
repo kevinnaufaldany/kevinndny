@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { fadeInUp, staggerContainer } from '@/lib/motion';
 
@@ -40,14 +41,12 @@ export const ContactSection: React.FC = () => {
 
           {/* Action Button */}
           <motion.div variants={fadeInUp} className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
+            <InteractiveHoverButton 
               asAnchor
               href="mailto:kevin@kevinndny.dev"
-              variant="primary"
-              className="py-4 px-10 text-sm"
-            >
-              Contact Me
-            </Button>
+              text="Contact Me"
+              className="w-44 py-3.5"
+            />
             <Button 
               asAnchor
               href="https://linkedin.com/in/kevinndny"

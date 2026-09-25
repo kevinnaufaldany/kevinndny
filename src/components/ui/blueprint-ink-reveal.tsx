@@ -18,46 +18,6 @@ export type BlueprintInkRevealProps = {
 const VIEW_W = 1200
 const VIEW_H = 220
 
-function drawWordmark(word: string, solid: boolean): string {
-  if (typeof document === "undefined") return ""
-  // 2x for sharp hairlines on retina screens
-  const S = 2
-  const W = VIEW_W * S
-  const H = VIEW_H * S
-  const c = document.createElement("canvas")
-  c.width = W
-  c.height = H
-  const x = c.getContext("2d")
-  if (!x) return ""
-
-  const text = (word || "KEVIN NAUFAL").toUpperCase()
-  const family = "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif"
-
-  // Bold, wide, and majestic letterforms matching frame_03 reference
-  const size = Math.round(H * 0.76)
-  x.font = "900 " + size + "px " + family
-  x.textAlign = "center"
-  x.textBaseline = "middle"
-
-  const centerX = W / 2
-  const centerY = H / 2
-
-  if (solid) {
-    x.fillStyle = "#111111"
-    x.fillText(text, centerX, centerY)
-    return c.toDataURL("image/png")
-  }
-
-  // Pure, clean, crisp hairline outline (No +/- CAD ticks or crosses)
-  x.strokeStyle = "#222222"
-  x.lineWidth = 1.6 * S
-  x.lineJoin = "miter"
-  x.miterLimit = 3
-  x.strokeText(text, centerX, centerY)
-
-  return c.toDataURL("image/png")
-}
-
 export function BlueprintInkReveal({
   wordmark = "KEVIN NAUFAL",
   inkRadius = 180,
@@ -65,10 +25,6 @@ export function BlueprintInkReveal({
   className = "",
   seamless = true,
 }: BlueprintInkRevealProps) {
-  const [plates, setPlates] = React.useState({ frame: "", solid: "" })
-  React.useEffect(() => {
-    setPlates({ frame: drawWordmark(wordmark, false), solid: drawWordmark(wordmark, true) })
-  }, [wordmark])
 
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = React.useState(false)
@@ -264,29 +220,47 @@ export function BlueprintInkReveal({
               </mask>
             </defs>
 
-            {/* Base Outlined Hairline Plate (Clean, No registration ticks) */}
-            {plates.frame && (
-              <image
-                href={plates.frame}
-                x={0}
-                y={0}
-                width={VIEW_W}
-                height={VIEW_H}
-                className="opacity-80"
-              />
-            )}
+            {/* 1. Base Outlined Hairline Plate - Instantaneous First-Paint Render (No canvas delay or blank flash) */}
+            <text
+              x="50%"
+              y="54%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="none"
+              stroke="#18181b"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="opacity-75 select-none"
+              style={{
+                fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
+                fontWeight: 900,
+                fontSize: `${VIEW_H * 0.76}px`,
+                letterSpacing: "0.02em",
+              }}
+            >
+              {(wordmark || "KEVIN NAUFAL").toUpperCase()}
+            </text>
 
-            {/* Revealed Solid Ink Plate masked by pointer circle */}
-            {plates.solid && (
-              <image
-                href={plates.solid}
-                x={0}
-                y={0}
-                width={VIEW_W}
-                height={VIEW_H}
-                mask={`url(#${maskId})`}
-              />
-            )}
+            {/* 2. Revealed Solid Ink Plate masked dynamically by pointer turbulence circle */}
+            <text
+              x="50%"
+              y="54%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#09090b"
+              stroke="none"
+              mask={`url(#${maskId})`}
+              className="select-none pointer-events-none"
+              style={{
+                fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
+                fontWeight: 900,
+                fontSize: `${VIEW_H * 0.76}px`,
+                letterSpacing: "0.02em",
+              }}
+            >
+              {(wordmark || "KEVIN NAUFAL").toUpperCase()}
+            </text>
           </svg>
         </div>
       </div>

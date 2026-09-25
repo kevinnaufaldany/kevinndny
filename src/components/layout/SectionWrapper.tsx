@@ -21,7 +21,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
     <section 
       id={id} 
       className={cn(
-        "relative py-24 sm:py-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300",
+        "relative py-20 sm:py-28 px-6 sm:px-8 overflow-hidden transition-colors duration-300 scroll-mt-14 sm:scroll-mt-16",
         dark ? "bg-brand-dark text-white" : "bg-white text-brand-dark",
         className
       )}

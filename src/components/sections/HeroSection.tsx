@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/Button';
 import { BlueprintInkReveal } from '@/components/ui/blueprint-ink-reveal';
+import { LiveOrb } from '@/components/ui/live-orb';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { fadeInUp, staggerContainer, springPresets } from '@/lib/motion';
 
@@ -20,7 +21,7 @@ export const HeroSection: React.FC = () => {
           <div className="w-full max-w-5xl lg:max-w-6xl mx-auto">
             <BlueprintInkReveal 
               wordmark="KEVIN NAUFAL" 
-              inkRadius={200}
+              inkRadius={100}
               showCoordinates={false}
               seamless={true}
             />
@@ -77,13 +78,20 @@ export const HeroSection: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Right Column: White Minimalist Social Icons (Aligned horizontally with Left Column) */}
+        {/* Right Column: Live Orb Character & White Minimalist Social Icons */}
         <motion.div 
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
-          className="w-full md:w-auto flex justify-center md:justify-end pointer-events-auto"
+          className="w-full md:w-auto flex flex-col items-center md:items-end gap-3 pointer-events-auto"
         >
+          {/* Interactive Live Orb floating directly above social pill matching proof1-bug.png */}
+          <div className="flex justify-center md:justify-end pr-1 sm:pr-2">
+            <div className="relative group cursor-grab active:cursor-grabbing hover:scale-105 transition-all duration-300 drop-shadow-md">
+              <LiveOrb size={130} variant="white" interactive={true} blink={true} />
+            </div>
+          </div>
+
           {/* Mobile: 2x2 grid with clean white bg */}
           <div className="md:hidden w-full max-w-xs">
             <SocialIcons layout="grid2x2" showLabels={true} className="w-full" />

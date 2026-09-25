@@ -8,6 +8,7 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { Button } from '@/components/ui/Button';
 import { SectionWrapper } from '@/components/layout/SectionWrapper';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Carousel360 } from '@/components/ui/image-fan-carousel';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { staggerContainer } from '@/lib/motion';
 
@@ -82,6 +83,19 @@ export const ProjectsSection: React.FC = () => {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* 3D Interactive Project Visuals Reel */}
+        <div className="mt-16 pt-10 border-t border-brand-border/70">
+          <div className="text-center mb-4">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-brand-secondary">
+              3D Interactive Showcase
+            </span>
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-brand-dark mt-1">
+              Field Imagery & Spatial Visuals
+            </h3>
+          </div>
+          <Carousel360 />
+        </div>
       </div>
     </SectionWrapper>
   );
