@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/cn";
 
 // ─────────────────────────────────────────────
 // Customize here — images, timing, sizes, geometry
@@ -37,7 +38,7 @@ const RADIUS_MIN = 120;
 const RADIUS_MAX = 320;
 const RADIUS_WIDTH_RATIO = 0.55;
 const PERSPECTIVE_MULTIPLIER = 2.4; // how strong the 3D perspective looks
-const RING_TILT_DEG = 38; // tilt angle of ring thumbnails
+const RING_TILT_DEG = 24; // balanced tilt angle of ring thumbnails to avoid vertical collisions
 
 // Center image crossfade
 const CROSSFADE_DURATION_S = 0.45;
@@ -67,8 +68,11 @@ const ImageLoader: React.FC = () => (
   </div>
 );
 
-interface Carousel360Props { imagesList?: string[] }
-export const Carousel360: React.FC<Carousel360Props> = ({ imagesList }) => {
+interface Carousel360Props { 
+  imagesList?: string[];
+  className?: string;
+}
+export const Carousel360: React.FC<Carousel360Props> = ({ imagesList, className = "" }) => {
   const rawImages = imagesList && imagesList.length > 0 ? imagesList : DEFAULT_IMAGES;
   // Duplicate if fewer than 6 images to maintain balanced spatial cylinder spacing
   const images = rawImages.length >= 6
@@ -138,10 +142,10 @@ export const Carousel360: React.FC<Carousel360Props> = ({ imagesList }) => {
   }, []);
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center select-none py-6 sm:py-10">
+    <div className={cn("relative w-full flex flex-col items-center justify-center select-none pt-12 sm:pt-16 pb-6 sm:pb-8", className)}>
       <div
         ref={containerRef}
-        className="relative w-[92%] max-w-150 aspect-5/3 flex items-center justify-center"
+        className="relative w-[94%] max-w-[620px] min-h-[360px] sm:min-h-[420px] flex items-center justify-center"
       >
         <div
           className="relative w-full h-full"
