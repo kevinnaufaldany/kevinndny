@@ -10,7 +10,12 @@ export const projectsData: Project[] = [
     gallery: [
       'https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=1400&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?q=80&w=1400&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1586771107445-d3ca888129ff?q=80&w=1400&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1586771107445-d3ca888129ff?q=80&w=1400&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=1400&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1400&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1400&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=1400&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?q=80&w=1400&auto=format&fit=crop'
     ],
     summary: 'Digitalizing large-scale pineapple plantations using drone-captured imagery, QGIS shapefiles, and near real-time edge Computer Vision.',
     description: 'Developed in the Digital Innovation Department at Great Giant Foods under the MagangHub Kemnaker RI program. The solution pairs GIS shapefile (.shp) boundary management with edge AI inference directly on drone platforms, accelerating plot-level health diagnosis and automated yield monitoring.',

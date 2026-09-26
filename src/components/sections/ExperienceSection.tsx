@@ -22,7 +22,7 @@ export const ExperienceSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="experience" className="py-12 sm:py-16 px-4 sm:px-8 bg-white border-t border-brand-border/80 scroll-mt-12 sm:scroll-mt-16">
+    <section id="experience" className="py-12 sm:py-16 px-4 sm:px-8 bg-white border-t border-brand-border/80 scroll-mt-0">
       <div 
         ref={ref}
         className="max-w-7xl mx-auto relative rounded-3xl bg-brand-dark text-white p-8 sm:p-14 md:p-16 overflow-hidden shadow-card border border-zinc-800"

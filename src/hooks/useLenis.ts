@@ -26,7 +26,7 @@ export function useLenis() {
 
     const rafId = requestAnimationFrame(raf);
 
-    // Smooth anchor navigation handling that accounts for fixed navbar offset
+    // Smooth anchor navigation handling - offset 0 ensures clean section alignment without exposing previous section edges
     const handleAnchorClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest('a');
       if (!target) return;
@@ -36,7 +36,7 @@ export function useLenis() {
         const el = document.getElementById(id);
         if (el) {
           e.preventDefault();
-          lenis.scrollTo(el, { offset: -80, duration: 1.2 });
+          lenis.scrollTo(el, { offset: 0, duration: 1.2 });
           window.history.pushState(null, '', href);
         }
       }
@@ -49,7 +49,7 @@ export function useLenis() {
       const initialEl = document.getElementById(window.location.hash.slice(1));
       if (initialEl) {
         setTimeout(() => {
-          lenis.scrollTo(initialEl, { offset: -80, immediate: true });
+          lenis.scrollTo(initialEl, { offset: 0, immediate: true });
         }, 350);
       }
     }

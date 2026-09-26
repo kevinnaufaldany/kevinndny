@@ -14,9 +14,43 @@ export type BlueprintInkRevealProps = {
   seamless?: boolean
 }
 
-// Wider coordinate space for bold, open grotesque letterforms
-const VIEW_W = 1200
+/**
+ * ============================================================================
+ * PANDUAN PENGATURAN TYPOGRAPHY WORDMARK ("KEVIN NAUFAL")
+ * ============================================================================
+ * File ini mengontrol efek interaktif Wordmark Hero ("KEVIN NAUFAL").
+ * Anda dapat dengan mudah menyesuaikan parameter tampilan berikut:
+ * 
+ * 1. Lebar & Tinggi Koordinat SVG (VIEW_W & VIEW_H):
+ *    - VIEW_W: Mengatur lebar bidang kanvas SVG (saat ini 1320).
+ *      Jika menambah letter-spacing atau menambah panjang kata, besarkan nilai ini
+ *      agar huruf paling kiri (K) dan paling kanan (L) tidak terpotong.
+ *    - VIEW_H: Mengatur tinggi bidang kanvas SVG (saat ini 220).
+ * 
+ * 2. Ukuran Huruf (fontSize) & Jarak Antar Huruf (letterSpacing):
+ *    - Diatur di objek `WORDMARK_TYPOGRAPHY_STYLES` di bawah.
+ *    - `fontSize`: `${VIEW_H * 0.62}px` (~136px). Naikkan jika ingin huruf lebih tinggi/tebal.
+ *    - `letterSpacing`: "0.06em". Nilai ini memberikan jarak renggang yang gagah & lega.
+ *      Ubah ke 0.07em atau 0.08em jika ingin lebih renggang lagi.
+ * 
+ * 3. Radius Efek Tinta Ink (inkRadius):
+ *    - Diatur via props `inkRadius` pada komponen (default 100-180px di HeroSection.tsx).
+ * ============================================================================
+ */
+
+// Lebar kanvas SVG koordinat proporsional untuk tipografi grotesque modern
+const VIEW_W = 1320
 const VIEW_H = 220
+
+/**
+ * Konfigurasi Gaya Tipografi Bersama (Memastikan teks outline & solid selalu selaras)
+ */
+export const WORDMARK_TYPOGRAPHY_STYLES: React.CSSProperties = {
+  fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
+  fontWeight: 900,
+  fontSize: `${VIEW_H * 0.62}px`, // Skala ukuran font proporsional terhadap kanvas
+  letterSpacing: "0.06em",         // Jarak antar huruf (tracking) - diperlebar untuk kesan gagah & bernafas
+}
 
 export function BlueprintInkReveal({
   wordmark = "KEVIN NAUFAL",
@@ -28,8 +62,8 @@ export function BlueprintInkReveal({
 
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = React.useState(false)
-  const [coords, setCoords] = React.useState({ x: 600, y: 110 })
-  const [springCoords, setSpringCoords] = React.useState({ x: 600, y: 110 })
+  const [coords, setCoords] = React.useState({ x: VIEW_W / 2, y: VIEW_H / 2 })
+  const [springCoords, setSpringCoords] = React.useState({ x: VIEW_W / 2, y: VIEW_H / 2 })
   const [currentRadius, setCurrentRadius] = React.useState(0)
   const svgRef = React.useRef<SVGSVGElement | null>(null)
   const [viewScale, setViewScale] = React.useState(1)
@@ -232,12 +266,7 @@ export function BlueprintInkReveal({
               strokeLinecap="round"
               strokeLinejoin="round"
               className="opacity-75 select-none"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
-                fontWeight: 900,
-                fontSize: `${VIEW_H * 0.67}px`,
-                letterSpacing: "0.01em",
-              }}
+              style={WORDMARK_TYPOGRAPHY_STYLES}
             >
               {(wordmark || "KEVIN NAUFAL").toUpperCase()}
             </text>
@@ -252,12 +281,7 @@ export function BlueprintInkReveal({
               stroke="none"
               mask={`url(#${maskId})`}
               className="select-none pointer-events-none"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
-                fontWeight: 900,
-                fontSize: `${VIEW_H * 0.67}px`,
-                letterSpacing: "0.01em",
-              }}
+              style={WORDMARK_TYPOGRAPHY_STYLES}
             >
               {(wordmark || "KEVIN NAUFAL").toUpperCase()}
             </text>

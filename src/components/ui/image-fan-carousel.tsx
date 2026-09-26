@@ -69,7 +69,13 @@ const ImageLoader: React.FC = () => (
 
 interface Carousel360Props { imagesList?: string[] }
 export const Carousel360: React.FC<Carousel360Props> = ({ imagesList }) => {
-  const images = imagesList && imagesList.length > 0 ? imagesList : DEFAULT_IMAGES;
+  const rawImages = imagesList && imagesList.length > 0 ? imagesList : DEFAULT_IMAGES;
+  // Duplicate if fewer than 6 images to maintain balanced spatial cylinder spacing
+  const images = rawImages.length >= 6
+    ? rawImages
+    : rawImages.length >= 3
+      ? [...rawImages, ...rawImages]
+      : [...rawImages, ...rawImages, ...rawImages];
   const numImages = images.length;
   const angleStep = 360 / numImages;
 

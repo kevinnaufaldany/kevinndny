@@ -1,22 +1,26 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
+import { cn } from '@/lib/cn';
+
+export type GlowColor = 'zinc' | 'monochrome' | 'blue' | 'purple' | 'green' | 'red' | 'orange';
 
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
-  glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange' | 'zinc';
+  glowColor?: GlowColor;
   size?: 'sm' | 'md' | 'lg';
   width?: string | number;
   height?: string | number;
   customSize?: boolean; // When true, ignores size prop and uses width/height or className
 }
 
-const glowColorMap = {
-  blue: { base: 220, spread: 200 },
-  purple: { base: 280, spread: 300 },
-  green: { base: 120, spread: 200 },
-  red: { base: 0, spread: 200 },
-  orange: { base: 30, spread: 200 },
-  zinc: { base: 0, spread: 0 }
+const glowColorMap: Record<GlowColor, { base: number; spread: number; saturation: number }> = {
+  zinc: { base: 0, spread: 0, saturation: 0 },
+  monochrome: { base: 0, spread: 0, saturation: 0 },
+  blue: { base: 220, spread: 200, saturation: 100 },
+  purple: { base: 280, spread: 300, saturation: 100 },
+  green: { base: 120, spread: 200, saturation: 100 },
+  red: { base: 0, spread: 200, saturation: 100 },
+  orange: { base: 30, spread: 200, saturation: 100 },
 };
 
 const sizeMap = {
@@ -28,7 +32,7 @@ const sizeMap = {
 const GlowCard: React.FC<GlowCardProps> = ({ 
   children, 
   className = '', 
-  glowColor = 'blue',
+  glowColor = 'monochrome',
   size = 'md',
   width,
   height,
@@ -53,7 +57,8 @@ const GlowCard: React.FC<GlowCardProps> = ({
     return () => document.removeEventListener('pointermove', syncPointer);
   }, []);
 
-  const { base, spread } = glowColorMap[glowColor];
+  const colorConfig = glowColorMap[glowColor] || glowColorMap.monochrome;
+  const isMonochrome = colorConfig.saturation === 0;
 
   // Determine sizing
   const getSizeClasses = () => {
@@ -65,23 +70,36 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
   const getInlineStyles = () => {
     const baseStyles: React.CSSProperties & Record<string, any> = {
-      '--base': base,
-      '--spread': spread,
-      '--radius': '14',
-      '--border': '3',
-      '--backdrop': 'hsl(0 0% 60% / 0.12)',
-      '--backup-border': 'var(--backdrop)',
-      '--size': '200',
+      '--base': colorConfig.base,
+      '--spread': colorConfig.spread,
+      '--saturation': `${colorConfig.saturation}%`,
+      '--radius': '16',
+      '--border': '1.5',
+      '--backdrop': 'rgba(255, 255, 255, 0.95)',
+      '--backup-border': 'rgba(228, 228, 231, 0.7)',
+      '--size': '240',
       '--outer': '1',
-      '--border-size': 'calc(var(--border, 2) * 1px)',
-      '--spotlight-size': 'calc(var(--size, 150) * 1px)',
+      '--border-size': 'calc(var(--border, 1.5) * 1px)',
+      '--spotlight-size': 'calc(var(--size, 240) * 1px)',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
-      backgroundImage: `radial-gradient(
-        var(--spotlight-size) var(--spotlight-size) at
-        calc(var(--x, 0) * 1px)
-        calc(var(--y, 0) * 1px),
-        hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.1)), transparent
-      )`,
+      '--bg-spot-opacity': isMonochrome ? '0.04' : '0.1',
+      '--border-spot-opacity': isMonochrome ? '0.45' : '0.9',
+      '--border-light-opacity': isMonochrome ? '0.6' : '0.8',
+      '--lightness': isMonochrome ? '22%' : '65%',
+      '--glow-filter': isMonochrome ? 'none' : 'brightness(2)',
+      backgroundImage: isMonochrome
+        ? `radial-gradient(
+            var(--spotlight-size) var(--spotlight-size) at
+            calc(var(--x, 0) * 1px)
+            calc(var(--y, 0) * 1px),
+            rgba(24, 24, 27, var(--bg-spot-opacity, 0.04)), transparent 70%
+          )`
+        : `radial-gradient(
+            var(--spotlight-size) var(--spotlight-size) at
+            calc(var(--x, 0) * 1px)
+            calc(var(--y, 0) * 1px),
+            hsl(var(--hue, 210) var(--saturation, 100%) 70% / var(--bg-spot-opacity, 0.1)), transparent
+          )`,
       backgroundColor: 'var(--backdrop, transparent)',
       backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
       backgroundPosition: '50% 50%',
@@ -91,7 +109,6 @@ const GlowCard: React.FC<GlowCardProps> = ({
       touchAction: 'none' as const,
     };
 
-    // Add width and height if provided
     if (width !== undefined) {
       baseStyles.width = typeof width === 'number' ? `${width}px` : width;
     }
@@ -118,6 +135,9 @@ const GlowCard: React.FC<GlowCardProps> = ({
       mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
       mask-clip: padding-box, border-box;
       mask-composite: intersect;
+      -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+      -webkit-mask-clip: padding-box, border-box;
+      -webkit-mask-composite: destination-in;
     }
     
     [data-glow]::before {
@@ -125,9 +145,9 @@ const GlowCard: React.FC<GlowCardProps> = ({
         calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
         calc(var(--x, 0) * 1px)
         calc(var(--y, 0) * 1px),
-        hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 50) * 1%) / var(--border-spot-opacity, 1)), transparent 100%
+        hsl(var(--hue, 0) var(--saturation, 0%) var(--lightness, 22%) / var(--border-spot-opacity, 0.45)), transparent 100%
       );
-      filter: brightness(2);
+      filter: var(--glow-filter, none);
     }
     
     [data-glow]::after {
@@ -135,7 +155,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
         calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
         calc(var(--x, 0) * 1px)
         calc(var(--y, 0) * 1px),
-        hsl(0 100% 100% / var(--border-light-opacity, 1)), transparent 100%
+        hsl(0 0% 100% / var(--border-light-opacity, 0.6)), transparent 100%
       );
     }
     
@@ -165,19 +185,12 @@ const GlowCard: React.FC<GlowCardProps> = ({
         ref={cardRef}
         data-glow
         style={getInlineStyles()}
-        className={`
-          ${getSizeClasses()}
-          ${!customSize ? 'aspect-[3/4]' : ''}
-          rounded-2xl 
-          relative 
-          grid 
-          grid-rows-[1fr_auto] 
-          shadow-[0_1rem_2rem_-1rem_black] 
-          p-4 
-          gap-4 
-          backdrop-blur-[5px]
-          ${className}
-        `}
+        className={cn(
+          getSizeClasses(),
+          !customSize && 'aspect-[3/4]',
+          'rounded-2xl relative grid grid-rows-[1fr_auto] p-4 gap-4 backdrop-blur-[5px]',
+          className
+        )}
       >
         <div ref={innerRef} data-glow></div>
         {children}
@@ -186,4 +199,4 @@ const GlowCard: React.FC<GlowCardProps> = ({
   );
 };
 
-export { GlowCard }
+export { GlowCard };

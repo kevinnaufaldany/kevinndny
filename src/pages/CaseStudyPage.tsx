@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowUpRight, ArrowLeft } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { projectsData } from '@/data/projects';
 import { Project } from '@/types';
 import { fetchProjectBySlug } from '@/services/portfolioService';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
+import { Carousel360 } from '@/components/ui/image-fan-carousel';
 import { fadeInUp, staggerContainer } from '@/lib/motion';
 
 export const CaseStudyPage: React.FC = () => {
@@ -81,20 +83,19 @@ export const CaseStudyPage: React.FC = () => {
               {project.summary}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-4 pt-2">
               {project.liveUrl && (
-                <Button 
+                <InteractiveHoverButton 
                   asAnchor
                   href={project.liveUrl}
-                  variant="primary"
-                  className="py-3.5 px-8"
-                >
-                  Live Preview
-                </Button>
+                  target="_blank"
+                  text="Live Preview"
+                  className="w-44 py-3.5 shadow-subtle hover:shadow-card font-medium"
+                />
               )}
               <Button 
                 asAnchor
-                href="#contact"
+                href="/#contact"
                 variant="outline"
                 showArrow={false}
                 className="py-3.5 px-7"
@@ -163,48 +164,79 @@ export const CaseStudyPage: React.FC = () => {
         {/* Narrative & Editorial Presentation */}
         <div className="py-16 space-y-16">
           {/* Main Showcase Hero Image */}
-          <div className="rounded-3xl overflow-hidden shadow-card border border-brand-border">
+          <div className="rounded-3xl overflow-hidden shadow-card border border-brand-border bg-zinc-50 relative group">
             <img 
               src={project.image} 
               alt={`${project.title} Hero View`}
-              className="w-full h-auto object-cover max-h-[700px]"
+              className="w-full h-auto object-cover max-h-[700px] transition-transform duration-500 group-hover:scale-[1.01]"
             />
           </div>
 
+          {/* 3D Interactive Project Visuals Reel (Relocated into Project Detail) */}
+          <div className="py-12 px-6 sm:px-10 rounded-3xl bg-brand-surface/70 border border-brand-border shadow-subtle">
+            <div className="text-center mb-6 max-w-xl mx-auto">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-brand-secondary">
+                3D Interactive Showcase
+              </span>
+              <h3 className="text-xl sm:text-3xl font-bold tracking-tight text-brand-dark mt-1">
+                Field Imagery & Spatial Visuals
+              </h3>
+              <p className="text-xs sm:text-sm text-brand-secondary mt-1.5 leading-relaxed">
+                Rotate through the spatial cylinder to inspect high-resolution field captures, aerial telemetry, and automated crop boundary digitization.
+              </p>
+            </div>
+            <Carousel360 imagesList={project.gallery && project.gallery.length > 0 ? project.gallery : [project.image]} />
+          </div>
+
           {/* Narrative Callout Block */}
-          <div className="max-w-3xl mx-auto p-8 sm:p-12 rounded-3xl bg-brand-surface border border-brand-border text-center sm:text-left">
-            <span className="text-xs font-mono uppercase tracking-widest text-brand-secondary block mb-2">
+          <div className="max-w-4xl mx-auto p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white border border-zinc-800 shadow-card text-center sm:text-left">
+            <span className="text-xs font-mono uppercase tracking-widest text-zinc-400 block mb-3">
               Design Philosophy & Strategy
             </span>
-            <p className="text-lg sm:text-xl text-brand-dark leading-relaxed font-medium">
+            <p className="text-lg sm:text-2xl text-zinc-100 leading-relaxed font-medium">
               "{project.description}"
             </p>
           </div>
 
           {/* Supplementary Gallery Screens */}
           {project.gallery && project.gallery.length > 1 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {project.gallery.slice(1).map((imgUrl, i) => (
-                <div key={i} className="rounded-2xl overflow-hidden shadow-subtle border border-brand-border">
-                  <img 
-                    src={imgUrl} 
-                    alt={`${project.title} Screen ${i + 2}`} 
-                    className="w-full h-full object-cover aspect-[4/3]"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-brand-border pb-3">
+                <span className="text-xs font-mono uppercase tracking-widest text-brand-secondary">
+                  High-Resolution Telemetry & Frames
+                </span>
+                <span className="text-xs font-mono text-brand-secondary">
+                  {project.gallery.length} Verified Frames
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {project.gallery.slice(1, 5).map((imgUrl, i) => (
+                  <div key={i} className="rounded-2xl overflow-hidden shadow-subtle border border-brand-border group relative aspect-[4/3] bg-zinc-100">
+                    <img 
+                      src={imgUrl} 
+                      alt={`${project.title} Screen ${i + 2}`} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                      Telemetry Capture #{i + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
         {/* Next Project Footer Bar */}
         <div className="pt-16 border-t border-brand-border/80 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <Link to="/">
-            <Button variant="outline" showArrow={false} className="gap-2">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Selected Work</span>
-            </Button>
+          <Link to="/#work">
+            <InteractiveHoverButton 
+              asDiv
+              text="All Projects"
+              textClassName="text-xs font-semibold"
+              className="w-36 py-3 shadow-none border-zinc-300 hover:border-brand-primary/40"
+            />
           </Link>
 
           <Link to={`/project/${nextProject.slug}`} className="group flex items-center gap-4 text-right">

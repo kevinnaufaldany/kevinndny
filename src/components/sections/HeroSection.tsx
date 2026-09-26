@@ -44,6 +44,28 @@ export const HeroSection: React.FC = () => {
         />
       </motion.div>
 
+      {/**
+       * ============================================================================
+       * PANDUAN PENGATURAN HERO SECTION
+       * ============================================================================
+       * 1. Lebar Kontainer Wordmark:
+       *    - `max-w-5xl lg:max-w-6xl` di atas menentukan lebar maksimal teks "KEVIN NAUFAL".
+       * 
+       * 2. Tinggi Foto Portrait Silhouette:
+       *    - `h-[46vh] sm:h-[54vh] md:h-[62vh] lg:h-[66vh] max-h-[620px]`
+       *    - Dapat diperbesar/diperkecil dengan mengubah persentase viewport height (vh).
+       * 
+       * 3. Baseline Posisi Baris Bawah (Desktop):
+       *    - `md:bottom-12 lg:bottom-16` di pembungkus baris bawah.
+       *    - Naikkan ke `bottom-16 lg:bottom-20` jika ingin posisi role & social bar lebih naik.
+       * 
+       * 4. Jarak Vertikal Live Orb ke Social Pill Bar:
+       *    - Diatur melalui `gap-7 sm:gap-8 md:gap-9` pada wrapper kolom kanan serta
+       *      `mb-2 sm:mb-3` pada pembungkus Live Orb.
+       *    - Naikkan nilai mb (misal `mb-4` atau `mb-6`) jika ingin Live Orb melayang lebih tinggi lagi.
+       * ============================================================================
+       */}
+
       {/* 3. Hero Bottom Row (Left Role & Right Socials, Sejajar & Lifted above screen bottom) */}
       {/* Mobile: Natural sequence (Role first, then 2x2 Socials) */}
       {/* Desktop: Absolute bottom row on the exact same baseline (bottom-12 lg:bottom-16) */}
@@ -77,14 +99,15 @@ export const HeroSection: React.FC = () => {
         </motion.div>
 
         {/* Right Column: Live Orb Character & White Minimalist Social Icons */}
+        {/* Menggunakan gap-7 sm:gap-8 md:gap-9 dan mb-2 sm:mb-3 agar Live Orb memiliki elevasi naik yang elegan di atas bar sosial */}
         <motion.div 
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
-          className="w-full md:w-auto flex flex-col items-center md:items-center gap-3 pointer-events-auto"
+          className="w-full md:w-auto flex flex-col items-center md:items-center gap-7 sm:gap-8 md:gap-9 pointer-events-auto"
         >
-          {/* Interactive Live Orb centered horizontally right above social pill */}
-          <div className="flex justify-center">
+          {/* Interactive Live Orb centered horizontally with elevated breathing room above social pill */}
+          <div className="flex justify-center mb-2 sm:mb-3">
             <div className="relative group cursor-grab active:cursor-grabbing hover:scale-105 transition-all duration-300 drop-shadow-md">
               <LiveOrb size={120} variant="white" interactive={true} blink={true} />
             </div>

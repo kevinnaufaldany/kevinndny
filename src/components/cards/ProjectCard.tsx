@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Project } from '@/types';
 import { useMagneticCursor } from '@/hooks/useMagneticCursor';
 import { springPresets } from '@/lib/motion';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 
 interface ProjectCardProps {
   project: Project;
@@ -66,26 +67,38 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
 
         {/* Card Info Content */}
-        <div className="p-6 bg-white flex-1 flex flex-col justify-between">
-          <div>
-            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-brand-dark group-hover:text-black transition-colors">
+        <div className="p-6 bg-white flex-1 flex flex-col justify-between gap-5">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono text-brand-secondary">
+              <span>{project.service}</span>
+              <span>{project.timeline}</span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-brand-dark group-hover:text-black transition-colors leading-snug">
               {project.title}
             </h3>
-            <p className="text-xs sm:text-sm text-brand-secondary mt-2 line-clamp-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-brand-secondary line-clamp-2 leading-relaxed font-normal">
               {project.summary}
             </p>
           </div>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-zinc-100">
-            {project.tags.map((tag) => (
-              <span 
-                key={tag}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-brand-surface text-brand-secondary border border-zinc-200/60"
-              >
-                {tag}
-              </span>
-            ))}
+          {/* Bottom Action & Tags Row */}
+          <div className="pt-4 border-t border-zinc-100 flex items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5 flex-1 overflow-hidden">
+              {project.tags.slice(0, 3).map((tag) => (
+                <span 
+                  key={tag}
+                  className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-brand-surface text-brand-secondary border border-zinc-200/60 whitespace-nowrap"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <InteractiveHoverButton 
+              asDiv 
+              text="View" 
+              textClassName="text-xs font-semibold"
+              className="w-24 py-2 shrink-0 shadow-none border-zinc-200 hover:border-brand-primary/40"
+            />
           </div>
         </div>
       </motion.article>
