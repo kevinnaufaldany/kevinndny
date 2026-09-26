@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { BlueprintInkReveal } from '@/components/ui/blueprint-ink-reveal';
 import { LiveOrb } from '@/components/ui/live-orb';
 import { SocialIcons } from '@/components/ui/social-icons';
+import { PortraitSilhouette } from '@/components/ui/portrait-silhouette';
 import { fadeInUp, staggerContainer, springPresets } from '@/lib/motion';
 
 export const HeroSection: React.FC = () => {
@@ -29,27 +30,24 @@ export const HeroSection: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* 2. Anchored Portrait Photo — 100% Dead-Center on All Screens */}
+      {/* 2. Anchored Portrait Photo — 100% Dead-Center on All Screens with Alpha-Accurate Silhouette Hover */}
       <motion.div 
         initial={{ opacity: 0, y: 35 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...springPresets.gentle, delay: 0.15 }}
         className="w-full flex justify-center items-center my-6 md:my-0 md:absolute md:bottom-0 md:left-0 md:right-0 z-20 pointer-events-none"
       >
-        <div className="relative flex justify-center items-end">
-          <img 
-            src="/assets/3x4-pro-no-bg.png" 
-            alt="Kevin Naufal Dany"
-            className="h-[46vh] sm:h-[54vh] md:h-[62vh] lg:h-[66vh] max-h-[620px] w-auto mx-auto object-contain object-bottom filter grayscale contrast-[1.08] hover:grayscale-0 transition-all duration-700 drop-shadow-md pointer-events-auto cursor-pointer"
-            loading="eager"
-          />
-        </div>
+        <PortraitSilhouette 
+          src="/assets/3x4-pro-no-bg.png" 
+          alt="Kevin Naufal Dany"
+          className="h-[46vh] sm:h-[54vh] md:h-[62vh] lg:h-[66vh] max-h-[620px] w-auto mx-auto object-contain object-bottom"
+        />
       </motion.div>
 
-      {/* 3. Hero Bottom Row (Left Role & Right Socials, Sejajar & Lowered) */}
+      {/* 3. Hero Bottom Row (Left Role & Right Socials, Sejajar & Lifted above screen bottom) */}
       {/* Mobile: Natural sequence (Role first, then 2x2 Socials) */}
-      {/* Desktop: Absolute bottom row on the exact same baseline (bottom-8 lg:bottom-10) */}
-      <div className="w-full flex flex-col md:flex-row md:items-end md:justify-between z-30 gap-8 md:gap-0 md:absolute md:inset-x-0 md:bottom-8 lg:bottom-10 md:px-12 lg:px-16 pointer-events-none">
+      {/* Desktop: Absolute bottom row on the exact same baseline (bottom-12 lg:bottom-16) */}
+      <div className="w-full flex flex-col md:flex-row md:items-end md:justify-between z-30 gap-8 md:gap-0 md:absolute md:inset-x-0 md:bottom-12 lg:bottom-16 md:px-12 lg:px-16 pointer-events-none">
         
         {/* Left Column: Role Headline, Tagline, & Collaborate CTA */}
         <motion.div 
@@ -83,12 +81,12 @@ export const HeroSection: React.FC = () => {
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
-          className="w-full md:w-auto flex flex-col items-center md:items-end gap-3 pointer-events-auto"
+          className="w-full md:w-auto flex flex-col items-center md:items-center gap-3 pointer-events-auto"
         >
-          {/* Interactive Live Orb floating directly above social pill matching proof1-bug.png */}
-          <div className="flex justify-center md:justify-end pr-1 sm:pr-2">
+          {/* Interactive Live Orb centered horizontally right above social pill */}
+          <div className="flex justify-center">
             <div className="relative group cursor-grab active:cursor-grabbing hover:scale-105 transition-all duration-300 drop-shadow-md">
-              <LiveOrb size={130} variant="white" interactive={true} blink={true} />
+              <LiveOrb size={120} variant="white" interactive={true} blink={true} />
             </div>
           </div>
 
@@ -97,7 +95,7 @@ export const HeroSection: React.FC = () => {
             <SocialIcons layout="grid2x2" showLabels={true} className="w-full" />
           </div>
 
-          {/* Desktop: Horizontal white pill bar perfectly aligned with the left CTA button */}
+          {/* Desktop: Horizontal white pill bar perfectly centered below Live Orb */}
           <div className="hidden md:block">
             <SocialIcons layout="row" />
           </div>

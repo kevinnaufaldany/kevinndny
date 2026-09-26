@@ -46,7 +46,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
       </div>
 
       {/* 2. Main Section Title Overlapping the Watermark */}
-      <div className="relative z-10 -mt-6 sm:-mt-12 md:-mt-16 lg:-mt-20 px-4">
+      <div className="relative z-10 -mt-4 sm:-mt-8 md:-mt-10 lg:-mt-12 px-4">
         {category && (
           <span 
             className={cn(

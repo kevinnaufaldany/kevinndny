@@ -5,6 +5,20 @@ import { projectsData } from '@/data/projects';
 import { servicesData } from '@/data/services';
 import { experiencesData } from '@/data/experiences';
 
+function parseJsonArray<T = string>(val: any): T[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export async function fetchProjects(): Promise<Project[]> {
   try {
     const { data, error } = await supabase
@@ -21,17 +35,17 @@ export async function fetchProjects(): Promise<Project[]> {
       slug: item.slug,
       title: item.title,
       category: item.category as 'Real Project' | 'Exploration',
-      tags: Array.isArray(item.tags) ? item.tags : [],
+      tags: parseJsonArray<string>(item.tags),
       image: item.image,
-      gallery: Array.isArray(item.gallery) ? item.gallery : [],
+      gallery: parseJsonArray<string>(item.gallery),
       summary: item.summary,
       description: item.description,
       service: item.service,
       timeline: item.timeline,
-      tools: Array.isArray(item.tools) ? item.tools : [],
+      tools: parseJsonArray<string>(item.tools),
       client: item.client,
       liveUrl: item.live_url,
-      metrics: Array.isArray(item.metrics) ? item.metrics : [],
+      metrics: parseJsonArray<{ label: string; value: string }>(item.metrics),
     }));
   } catch (err) {
     console.warn('fetchProjects error, using fallback:', err);
@@ -55,17 +69,17 @@ export async function fetchProjectBySlug(slug: string): Promise<Project | undefi
       slug: data.slug,
       title: data.title,
       category: data.category as 'Real Project' | 'Exploration',
-      tags: Array.isArray(data.tags) ? data.tags : [],
+      tags: parseJsonArray<string>(data.tags),
       image: data.image,
-      gallery: Array.isArray(data.gallery) ? data.gallery : [],
+      gallery: parseJsonArray<string>(data.gallery),
       summary: data.summary,
       description: data.description,
       service: data.service,
       timeline: data.timeline,
-      tools: Array.isArray(data.tools) ? data.tools : [],
+      tools: parseJsonArray<string>(data.tools),
       client: data.client,
       liveUrl: data.live_url,
-      metrics: Array.isArray(data.metrics) ? data.metrics : [],
+      metrics: parseJsonArray<{ label: string; value: string }>(data.metrics),
     };
   } catch (err) {
     console.warn('fetchProjectBySlug error, using fallback:', err);
@@ -88,8 +102,8 @@ export async function fetchServices(): Promise<Service[]> {
       id: item.id,
       title: item.title,
       description: item.description,
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      mockupImages: Array.isArray(item.mockup_images) ? item.mockup_images : [],
+      tags: parseJsonArray<string>(item.tags),
+      mockupImages: parseJsonArray<string>(item.mockup_images),
     }));
   } catch (err) {
     console.warn('fetchServices error, using fallback:', err);
@@ -142,7 +156,7 @@ export async function fetchCertifications(): Promise<Certification[]> {
       isProfessional: item.is_professional,
       badgeUrl: item.badge_url || undefined,
       description: item.description,
-      skills: Array.isArray(item.skills) ? item.skills : [],
+      skills: parseJsonArray<string>(item.skills),
       credentialUrl: item.credential_url || undefined,
     }));
   } catch (err) {

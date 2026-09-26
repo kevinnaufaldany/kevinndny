@@ -235,8 +235,8 @@ export function BlueprintInkReveal({
               style={{
                 fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
                 fontWeight: 900,
-                fontSize: `${VIEW_H * 0.76}px`,
-                letterSpacing: "0.02em",
+                fontSize: `${VIEW_H * 0.67}px`,
+                letterSpacing: "0.01em",
               }}
             >
               {(wordmark || "KEVIN NAUFAL").toUpperCase()}
@@ -255,8 +255,8 @@ export function BlueprintInkReveal({
               style={{
                 fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
                 fontWeight: 900,
-                fontSize: `${VIEW_H * 0.76}px`,
-                letterSpacing: "0.02em",
+                fontSize: `${VIEW_H * 0.67}px`,
+                letterSpacing: "0.01em",
               }}
             >
               {(wordmark || "KEVIN NAUFAL").toUpperCase()}

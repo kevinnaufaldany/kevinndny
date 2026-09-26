@@ -16,7 +16,7 @@ export const Watermark: React.FC<WatermarkProps> = ({
     <div 
       aria-hidden="true"
       className={cn(
-        "absolute -top-12 md:-top-16 left-0 right-0 text-center pointer-events-none select-none z-0 overflow-hidden",
+        "absolute top-2 sm:top-4 md:top-6 left-0 right-0 text-center pointer-events-none select-none z-0 overflow-hidden",
         className
       )}
     >

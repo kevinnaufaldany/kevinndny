@@ -16,13 +16,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
     <Link to={`/project/${project.slug}`}>
       <motion.article 
-        {...bind}
         initial="rest"
         whileHover="hover"
         className="group relative rounded-2xl overflow-hidden border border-brand-border/70 bg-white hover:border-brand-primary/40 shadow-subtle hover:shadow-card transition-colors duration-300 flex flex-col cursor-pointer"
       >
-        {/* Card Thumbnail Area */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
+        {/* Card Thumbnail Area — Magnetic Floating Cursor constrained only to image background */}
+        <div 
+          {...bind}
+          className="relative aspect-[16/10] overflow-hidden bg-zinc-100"
+        >
           <motion.img 
             src={project.image} 
             alt={project.title} 
