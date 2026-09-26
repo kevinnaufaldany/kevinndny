@@ -3,6 +3,7 @@ import { AnimatePresence } from 'motion/react';
 import { HomePage } from '@/pages/HomePage';
 import { CaseStudyPage } from '@/pages/CaseStudyPage';
 import { useLenis } from '@/hooks/useLenis';
+import { BackToTop } from '@/components/ui/back-to-top';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -24,6 +25,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AnimatedRoutes />
+      <BackToTop />
     </BrowserRouter>
   );
 }

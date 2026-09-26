@@ -128,15 +128,15 @@ export const CertificationsSection: React.FC = () => {
             <GlowCard
               key={cert.id}
               customSize
-              glowColor="zinc"
-              className="p-6 rounded-2xl bg-white border border-brand-border/80 hover:border-brand-primary/40 shadow-subtle hover:shadow-card transition-all duration-300 flex flex-col justify-between"
+              glowColor="emerald"
+              className="p-6 rounded-2xl bg-white border border-brand-border/80 hover:border-emerald-500/40 shadow-subtle hover:shadow-[0_10px_30px_rgba(16,185,129,0.08)] group transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono text-brand-secondary">
                   <span>{cert.issuer}</span>
                   <span>{cert.issueDate}</span>
                 </div>
-                <h4 className="text-lg font-bold text-brand-dark tracking-tight leading-snug">
+                <h4 className="text-lg font-bold text-brand-dark group-hover:text-black tracking-tight leading-snug transition-colors">
                   {cert.name}
                 </h4>
                 <p className="text-xs text-brand-secondary leading-relaxed">

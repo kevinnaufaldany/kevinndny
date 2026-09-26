@@ -382,7 +382,7 @@ export function OrbitingSkills({
   return (
     <div className={`relative w-full flex items-center justify-center select-none ${className}`}>
       <div 
-        className="relative w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] md:w-[420px] md:h-[420px] flex items-center justify-center"
+        className="relative w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] md:w-[420px] md:h-[420px] flex items-center justify-center scale-[0.75] sm:scale-100 origin-center transition-transform duration-300"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >

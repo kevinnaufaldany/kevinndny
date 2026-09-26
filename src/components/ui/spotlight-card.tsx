@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-export type GlowColor = 'zinc' | 'monochrome' | 'blue' | 'purple' | 'green' | 'red' | 'orange';
+export type GlowColor = 'zinc' | 'monochrome' | 'emerald' | 'green' | 'blue' | 'purple' | 'red' | 'orange';
 
 interface GlowCardProps {
   children: ReactNode;
@@ -13,12 +13,13 @@ interface GlowCardProps {
   customSize?: boolean; // When true, ignores size prop and uses width/height or className
 }
 
-const glowColorMap: Record<GlowColor, { base: number; spread: number; saturation: number }> = {
+const glowColorMap: Record<GlowColor, { base: number; spread: number; saturation: number; lightness?: number }> = {
   zinc: { base: 0, spread: 0, saturation: 0 },
   monochrome: { base: 0, spread: 0, saturation: 0 },
+  emerald: { base: 158, spread: 40, saturation: 85, lightness: 48 }, // AWS Emerald theme
+  green: { base: 158, spread: 40, saturation: 85, lightness: 48 },
   blue: { base: 220, spread: 200, saturation: 100 },
   purple: { base: 280, spread: 300, saturation: 100 },
-  green: { base: 120, spread: 200, saturation: 100 },
   red: { base: 0, spread: 200, saturation: 100 },
   orange: { base: 30, spread: 200, saturation: 100 },
 };
@@ -82,11 +83,11 @@ const GlowCard: React.FC<GlowCardProps> = ({
       '--border-size': 'calc(var(--border, 1.5) * 1px)',
       '--spotlight-size': 'calc(var(--size, 240) * 1px)',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
-      '--bg-spot-opacity': isMonochrome ? '0.04' : '0.1',
-      '--border-spot-opacity': isMonochrome ? '0.45' : '0.9',
+      '--bg-spot-opacity': isMonochrome ? '0.04' : (colorConfig.saturation > 0 ? '0.09' : '0.1'),
+      '--border-spot-opacity': isMonochrome ? '0.45' : '0.85',
       '--border-light-opacity': isMonochrome ? '0.6' : '0.8',
-      '--lightness': isMonochrome ? '22%' : '65%',
-      '--glow-filter': isMonochrome ? 'none' : 'brightness(2)',
+      '--lightness': isMonochrome ? '22%' : `${colorConfig.lightness || 65}%`,
+      '--glow-filter': isMonochrome ? 'none' : 'brightness(1.6)',
       backgroundImage: isMonochrome
         ? `radial-gradient(
             var(--spotlight-size) var(--spotlight-size) at
@@ -98,7 +99,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
             var(--spotlight-size) var(--spotlight-size) at
             calc(var(--x, 0) * 1px)
             calc(var(--y, 0) * 1px),
-            hsl(var(--hue, 210) var(--saturation, 100%) 70% / var(--bg-spot-opacity, 0.1)), transparent
+            hsl(var(--hue, 158) var(--saturation, 85%) var(--lightness, 48%) / var(--bg-spot-opacity, 0.09)), transparent 75%
           )`,
       backgroundColor: 'var(--backdrop, transparent)',
       backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
