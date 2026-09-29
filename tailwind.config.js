@@ -19,6 +19,16 @@ export default {
           muted: '#7B7B7B',
           border: '#E4E4E7',
           surface: '#F8F8F8',
+        },
+        background: '#FFFFFF',
+        foreground: '#18181B',
+        muted: {
+          DEFAULT: '#F4F4F5',
+          foreground: '#71717A',
+        },
+        accent: {
+          DEFAULT: '#F4F4F5',
+          foreground: '#18181B',
         }
       },
       fontFamily: {

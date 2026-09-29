@@ -4,6 +4,7 @@ import { HomePage } from '@/pages/HomePage';
 import { CaseStudyPage } from '@/pages/CaseStudyPage';
 import { useLenis } from '@/hooks/useLenis';
 import { BackToTop } from '@/components/ui/back-to-top';
+import DefaultFooterDemo from '@/components/ui/demo';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -16,6 +17,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/project/:slug" element={<CaseStudyPage />} />
+        <Route path="/demo/footer" element={<DefaultFooterDemo />} />
       </Routes>
     </AnimatePresence>
   );

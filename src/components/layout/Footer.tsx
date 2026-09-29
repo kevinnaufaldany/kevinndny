@@ -71,8 +71,9 @@ const footerSocials: FooterSocial[] = [
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="py-5 sm:py-6 px-6 sm:px-8 bg-white text-brand-secondary text-xs select-none">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+    <footer className="w-full bg-white text-brand-secondary text-xs select-none overflow-hidden">
+      {/* Top Main Bar: Identity on Left, Clean Minimalist Social Icons on Right */}
+      <div className="max-w-7xl mx-auto py-5 sm:py-6 px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         {/* Left: Identity & Role */}
         <div className="flex items-center gap-2.5">
           <span className="font-semibold text-brand-primary tracking-tight">KEVIN NAUFAL DANY</span>
@@ -108,8 +109,21 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
+      {/* Moving Striped CAD / Blueprint Texture Divider (Seamless Infinite Loop) */}
+      <motion.div
+        aria-hidden="true"
+        className="w-full h-8 sm:h-10 border-y border-zinc-200/80 opacity-20 bg-[repeating-linear-gradient(315deg,currentColor_0,currentColor_1px,transparent_0,transparent_50%)] text-zinc-900"
+        style={{ backgroundSize: "20px 20px" }}
+        animate={{ backgroundPositionX: ["0px", "40px"] }}
+        transition={{
+          ease: "linear",
+          duration: 3,
+          repeat: Infinity,
+        }}
+      />
+
       {/* Centered Small Copyright */}
-      <div className="max-w-7xl mx-auto mt-3 sm:mt-4 text-center">
+      <div className="max-w-7xl mx-auto py-3 sm:py-4 px-6 text-center">
         <p className="text-[11px] text-zinc-400 font-mono tracking-wider">
           © {new Date().getFullYear()} All rights reserved.
         </p>
@@ -119,6 +133,3 @@ export const Footer: React.FC = () => {
 };
 
 export default Footer;
-
-
-
