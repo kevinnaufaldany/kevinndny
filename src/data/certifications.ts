@@ -22,7 +22,7 @@ export const certificationsData: Certification[] = [
     badgeUrl: 'https://images.credly.com/size/340x340/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png',
     description: 'Validates overall understanding of AWS Cloud platform concepts, security, architecture principles, core cloud services, and compliance frameworks.',
     skills: ['AWS Cloud', 'Cloud Architecture', 'Security & Compliance', 'Billing & Pricing', 'EC2 & S3'],
-    credentialUrl: 'https://www.linkedin.com/in/kevin-naufal-dany/'
+    credentialUrl: 'https://www.credly.com/badges/36f6df6c-5bcb-44cb-bd4c-06ae908fc084/public_url'
   },
   {
     id: 'associate-data-scientist',
@@ -36,13 +36,13 @@ export const certificationsData: Certification[] = [
   },
   {
     id: 'aws-restart',
-    name: 'AWS re/Start Graduate — Cloud Infrastructure',
+    name: 'AWS re/Start Graduate',
     issuer: 'Amazon Web Services & Orbit Future Academy',
     issueDate: '2026',
     isProfessional: false,
     description: 'Rigorous 12-week cloud computing program covering Linux command line, networking fundamentals, databases, Python automation, and AWS infrastructure management.',
     skills: ['Linux', 'Cloud Infrastructure', 'SysAdmin', 'Networking'],
-    credentialUrl: 'https://www.linkedin.com/in/kevin-naufal-dany/'
+    credentialUrl: 'https://www.credly.com/badges/a1c859b5-e680-493a-8f7c-3b3060b5e262/public_url'
   },
   {
     id: 'ms-elevate',

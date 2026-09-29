@@ -35,5 +35,5 @@ export interface Experience {
 export interface SocialLink {
   name: string;
   url: string;
-  iconName: 'github' | 'linkedin' | 'dribbble' | 'instagram' | 'behance';
+  iconName: 'github' | 'linkedin' | 'dribbble' | 'credly' | 'behance';
 }
