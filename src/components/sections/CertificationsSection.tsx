@@ -103,12 +103,12 @@ export const CertificationsSection: React.FC = () => {
 
                 <div className="pt-2">
                   <a
-                    href="https://www.linkedin.com/in/kevin-naufal-dany/"
+                    href="https://www.credly.com/badges/36f6df6c-5bcb-44cb-bd4c-06ae908fc084/public_url"
                     target="_blank"
                     rel="noreferrer noopener"
                     className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
                   >
-                    <span>Verify Credential on LinkedIn</span>
+                    <span>Verify Credential on Credly</span>
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
                 </div>
