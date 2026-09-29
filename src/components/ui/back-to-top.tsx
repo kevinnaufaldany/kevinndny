@@ -12,7 +12,7 @@ interface BackToTopProps {
 }
 
 export const BackToTop: React.FC<BackToTopProps> = ({ 
-  threshold = 850, 
+  threshold = 450, 
   className = "" 
 }) => {
   const [isVisible, setIsVisible] = useState(false);

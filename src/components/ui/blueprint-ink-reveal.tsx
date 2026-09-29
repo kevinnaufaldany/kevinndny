@@ -12,53 +12,68 @@ export type BlueprintInkRevealProps = {
   className?: string
   /** Hide CAD borders & background for seamless hero integration */
   seamless?: boolean
+  /** Custom font size (e.g. "101px" or 101). Otomatis dioptimalkan sesuai panjang kata jika tidak diisi */
+  fontSize?: string | number
+  /** Custom letter-spacing (e.g. "0.04em" atau "0.06em"). Otomatis dioptimalkan jika tidak diisi */
+  letterSpacing?: string
+  /** Lebar kanvas SVG koordinat (default: 1440 untuk nama lengkap, 1320 untuk nama pendek) */
+  viewWidth?: number
+  /** Tinggi kanvas SVG koordinat (default: 220) */
+  viewHeight?: number
 }
 
 /**
  * ============================================================================
- * PANDUAN PENGATURAN TYPOGRAPHY WORDMARK ("KEVIN NAUFAL")
+ * PANDUAN PENGATURAN TYPOGRAPHY WORDMARK ("KEVIN NAUFAL DANY")
  * ============================================================================
- * File ini mengontrol efek interaktif Wordmark Hero ("KEVIN NAUFAL").
+ * File ini mengontrol efek interaktif Wordmark Hero.
  * Anda dapat dengan mudah menyesuaikan parameter tampilan berikut:
  * 
- * 1. Lebar & Tinggi Koordinat SVG (VIEW_W & VIEW_H):
- *    - VIEW_W: Mengatur lebar bidang kanvas SVG (saat ini 1320).
- *      Jika menambah letter-spacing atau menambah panjang kata, besarkan nilai ini
- *      agar huruf paling kiri (K) dan paling kanan (L) tidak terpotong.
- *    - VIEW_H: Mengatur tinggi bidang kanvas SVG (saat ini 220).
+ * 1. Lebar & Tinggi Koordinat SVG (viewWidth & viewHeight):
+ *    - viewWidth: Mengatur lebar bidang kanvas SVG (default: 1440 untuk nama lengkap, 1320 untuk pendek).
+ *      Memberikan margin aman di sisi kiri (huruf K) dan kanan (huruf Y) agar tidak terpotong.
+ *    - viewHeight: Mengatur tinggi bidang kanvas SVG (default: 220).
  * 
  * 2. Ukuran Huruf (fontSize) & Jarak Antar Huruf (letterSpacing):
- *    - Diatur di objek `WORDMARK_TYPOGRAPHY_STYLES` di bawah.
- *    - `fontSize`: `${VIEW_H * 0.62}px` (~136px). Naikkan jika ingin huruf lebih tinggi/tebal.
- *    - `letterSpacing`: "0.06em". Nilai ini memberikan jarak renggang yang gagah & lega.
- *      Ubah ke 0.07em atau 0.08em jika ingin lebih renggang lagi.
+ *    - Untuk "KEVIN NAUFAL DANY": idealnya fontSize ~101px dan letterSpacing 0.04em.
+ *    - Untuk "KEVIN NAUFAL": idealnya fontSize ~136px dan letterSpacing 0.06em.
+ *    - Parameter ini juga bisa di-override langsung melalui props komponen!
  * 
  * 3. Radius Efek Tinta Ink (inkRadius):
  *    - Diatur via props `inkRadius` pada komponen (default 100-180px di HeroSection.tsx).
  * ============================================================================
  */
 
-// Lebar kanvas SVG koordinat proporsional untuk tipografi grotesque modern
-const VIEW_W = 1320
-const VIEW_H = 220
-
-/**
- * Konfigurasi Gaya Tipografi Bersama (Memastikan teks outline & solid selalu selaras)
- */
-export const WORDMARK_TYPOGRAPHY_STYLES: React.CSSProperties = {
-  fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
-  fontWeight: 900,
-  fontSize: `${VIEW_H * 0.62}px`, // Skala ukuran font proporsional terhadap kanvas
-  letterSpacing: "0.06em",         // Jarak antar huruf (tracking) - diperlebar untuk kesan gagah & bernafas
-}
-
 export function BlueprintInkReveal({
-  wordmark = "KEVIN NAUFAL",
+  wordmark = "KEVIN NAUFAL DANY",
   inkRadius = 180,
   showCoordinates = false,
   className = "",
   seamless = true,
+  fontSize,
+  letterSpacing,
+  viewWidth,
+  viewHeight,
 }: BlueprintInkRevealProps) {
+  // Hitung dimensi kanvas SVG: nama panjang (seperti KEVIN NAUFAL DANY) menggunakan kanvas 1440 agar K dan Y tidak terpotong
+  const isLongWord = (wordmark?.length || 0) > 13
+  const VIEW_W = viewWidth ?? (isLongWord ? 1440 : 1320)
+  const VIEW_H = viewHeight ?? 220
+
+  // Hitung ukuran font & tracking yang proporsional
+  const resolvedFontSize = fontSize 
+    ? (typeof fontSize === "number" ? `${fontSize}px` : fontSize)
+    : (isLongWord ? `${VIEW_H * 0.46}px` : `${VIEW_H * 0.62}px`)
+
+  const resolvedLetterSpacing = letterSpacing ?? (isLongWord ? "0.04em" : "0.06em")
+
+  const typographyStyles: React.CSSProperties = {
+    fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
+    fontWeight: 900,
+    fontSize: resolvedFontSize,
+    letterSpacing: resolvedLetterSpacing,
+  }
+
 
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = React.useState(false)
@@ -266,9 +281,9 @@ export function BlueprintInkReveal({
               strokeLinecap="round"
               strokeLinejoin="round"
               className="opacity-75 select-none"
-              style={WORDMARK_TYPOGRAPHY_STYLES}
+              style={typographyStyles}
             >
-              {(wordmark || "KEVIN NAUFAL").toUpperCase()}
+              {(wordmark || "KEVIN NAUFAL DANY").toUpperCase()}
             </text>
 
             {/* 2. Revealed Solid Ink Plate masked dynamically by pointer turbulence circle */}
@@ -281,9 +296,9 @@ export function BlueprintInkReveal({
               stroke="none"
               mask={`url(#${maskId})`}
               className="select-none pointer-events-none"
-              style={WORDMARK_TYPOGRAPHY_STYLES}
+              style={typographyStyles}
             >
-              {(wordmark || "KEVIN NAUFAL").toUpperCase()}
+              {(wordmark || "KEVIN NAUFAL DANY").toUpperCase()}
             </text>
           </svg>
         </div>

@@ -18,13 +18,40 @@ export const HeroSection: React.FC = () => {
         animate="visible"
         className="w-full text-center z-10 pt-1 sm:pt-3"
       >
+        {/* =========================================================================
+            [KODE LAMA SEBELUMNYA - DI-COMMENT]
+            Versi sebelum penyesuaian viewBox: huruf K dan Y terpotong di canvas 1320
+           ========================================================================= */}
+        {/* 
         <motion.div variants={fadeInUp} className="w-full">
           <div className="w-full max-w-5xl lg:max-w-6xl mx-auto">
             <BlueprintInkReveal 
-              wordmark="KEVIN NAUFAL" 
+              wordmark="KEVIN NAUFAL DANY" 
               inkRadius={100}
               showCoordinates={false}
               seamless={true}
+            />
+          </div>
+        </motion.div>
+        */}
+
+        {/* =========================================================================
+            [KODE BARU AKTIF] - NAMA LENGKAP: "KEVIN NAUFAL DANY"
+            • viewWidth={1440}: Kanvas SVG diperlebar sehingga huruf K dan Y masuk 100% utuh
+            • fontSize="101px": Ukuran huruf proporsional, tegas, dan tidak menabrak margin
+            • letterSpacing="0.04em": Jarak antar huruf harmonis & bernafas lega
+            • max-w-5xl lg:max-w-6xl xl:max-w-7xl: Fleksibel & gagah di desktop dan mobile
+           ========================================================================= */}
+        <motion.div variants={fadeInUp} className="w-full">
+          <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+            <BlueprintInkReveal 
+              wordmark="KEVIN NAUFAL DANY" 
+              inkRadius={100}
+              showCoordinates={false}
+              seamless={true}
+              viewWidth={1440}
+              fontSize="133.4px"
+              letterSpacing="0.04em"
             />
           </div>
         </motion.div>
