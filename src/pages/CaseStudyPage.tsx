@@ -323,7 +323,7 @@ export const CaseStudyPage: React.FC = () => {
         {/* Next Project Footer Bar - Single Row on Mobile & Desktop */}
         <div className="pt-12 sm:pt-16 border-t border-brand-border/80 flex flex-row items-center justify-between gap-3 sm:gap-6 w-full">
           {/* Left: All Projects with Left-Facing Interactive Hover Button */}
-          <Link to="/#work" className="shrink-0">
+          <Link to="/#project" className="shrink-0">
             <InteractiveHoverButton 
               asDiv
               direction="left"

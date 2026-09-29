@@ -32,12 +32,12 @@ export const ProjectsSection: React.FC = () => {
     : projects.filter((p) => p.category === activeFilter);
 
   return (
-    <SectionWrapper id="work" className="border-t border-brand-border/80 bg-white">
+    <SectionWrapper id="project" className="border-t border-brand-border/80 bg-white">
       <div ref={ref}>
         {/* Section Header with PORTFOLIO Watermark Backdrop (Exact Frame 07 Reference Layout) */}
         <SectionHeader
           watermark="PORTFOLIO"
-          title="/SELECTED WORK"
+          title="/SELECTED PROJECTS"
           category="Selected Archives"
         >
           {/* Action Row right below title: Filters on Left, View All on Right */}
@@ -54,7 +54,7 @@ export const ProjectsSection: React.FC = () => {
               variant="outline"
               className="hidden sm:inline-flex"
             >
-              View All Work
+              View All Projects on GitHub
             </Button>
           </div>
         </SectionHeader>

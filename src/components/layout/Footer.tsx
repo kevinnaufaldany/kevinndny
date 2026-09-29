@@ -1,6 +1,15 @@
-import React from 'react';
+"use client";
 
-const footerSocials = [
+import React from 'react';
+import { motion } from 'motion/react';
+
+interface FooterSocial {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const footerSocials: FooterSocial[] = [
   {
     name: 'GitHub',
     href: 'https://github.com/kevinnaufaldany',
@@ -29,6 +38,26 @@ const footerSocials = [
     ),
   },
   {
+    name: 'Instagram',
+    href: 'https://instagram.com/kevinndny',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+      </svg>
+    ),
+  },
+  {
+    name: 'YouTube',
+    href: 'https://youtube.com/@kevinnaufaldany',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+    ),
+  },
+  {
     name: 'Email',
     href: 'mailto:kevinndny@gmail.com',
     icon: (
@@ -42,34 +71,45 @@ const footerSocials = [
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="py-7 sm:py-8 px-6 sm:px-8 border-t border-brand-border/70 bg-white text-brand-secondary text-xs">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Identity & Role */}
+    <footer className="py-5 sm:py-6 px-6 sm:px-8 bg-white text-brand-secondary text-xs select-none">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+        {/* Left: Identity & Role */}
         <div className="flex items-center gap-2.5">
           <span className="font-semibold text-brand-primary tracking-tight">KEVIN NAUFAL DANY</span>
           <span className="text-zinc-300">/</span>
           <span className="text-brand-secondary text-[11px] sm:text-xs">Computer Vision Engineer</span>
         </div>
 
-        {/* Minimal, compact icon-only social links (no bulky card, no labels) */}
-        <div className="flex items-center gap-1.5">
-          {footerSocials.map((social) => (
-            <a
-              key={social.name}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={social.name}
-              className="p-2 rounded-lg text-zinc-500 hover:text-brand-dark hover:bg-zinc-100/80 transition-all duration-200"
-            >
-              {social.icon}
-            </a>
-          ))}
+        {/* Right: Clean Minimalist Social Icons with Alternating 10deg Tilt Hover */}
+        <div className="flex items-center gap-1">
+          {footerSocials.map((social, index) => {
+            // Alternating tilt: first to right (+10°), second to left (-10°), third to right (+10°)...
+            const tiltDeg = index % 2 === 0 ? 10 : -10;
+
+            return (
+              <motion.a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                whileHover={{ 
+                  scale: 1.15, 
+                  rotate: tiltDeg,
+                  transition: { type: "spring", stiffness: 450, damping: 18 }
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-lg text-zinc-500 hover:text-brand-dark transition-colors duration-200 flex items-center justify-center cursor-pointer"
+              >
+                {social.icon}
+              </motion.a>
+            );
+          })}
         </div>
       </div>
 
       {/* Centered Small Copyright */}
-      <div className="max-w-7xl mx-auto pt-4 mt-4 border-t border-zinc-100 text-center">
+      <div className="max-w-7xl mx-auto mt-3 sm:mt-4 text-center">
         <p className="text-[11px] text-zinc-400 font-mono tracking-wider">
           © {new Date().getFullYear()} All rights reserved.
         </p>
@@ -77,5 +117,8 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+
+export default Footer;
+
 
 

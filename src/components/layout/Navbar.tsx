@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isCaseStudy = false, projectTitl
   }, []);
 
   const navLinks = [
-    { name: 'Work', href: '/#work', count: '06' },
+    { name: 'Project', href: '/#project', count: '06' },
     { name: 'Service', href: '/#services', count: '04' },
     { name: 'Experience', href: '/#experience', count: '05' },
     { name: 'Certifications', href: '/#certifications', count: '01' },
@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isCaseStudy = false, projectTitl
             <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-mono min-w-0">
               <span className="text-zinc-300">/</span>
               <Link 
-                to="/#work" 
+                to="/#project" 
                 className="text-brand-secondary hover:text-brand-dark transition-colors uppercase tracking-wider font-medium text-[11px] sm:text-xs shrink-0"
               >
                 Project
