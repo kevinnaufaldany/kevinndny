@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 export interface WorksWheelItem {
@@ -21,25 +22,28 @@ export interface WorksWheelProps extends Omit<
   items: WorksWheelItem[];
   /** Sits in the middle of the ring. @default "Works '26" */
   label?: string;
-  /** Label on the card's hover affordance. Omit to drop it. @default "View" */
+  /** Label on the card's hover affordance. Omit to drop it. @default "View Project" */
   action?: string;
 }
 
-/* Geometry constants. */
-const CARD_H = 0.42; // front card height, relative to stage
-const CARD_RATIO = 1.48; // card width / height
+/* Geometry constants tuned so the ring fits completely without clipping */
+const CARD_H = 0.34; // front card height, relative to stage
+const CARD_RATIO = 1.45; // card width / height
 const STEP = 40; // degrees between cards on the drum
 const DRUM = 2.22; // drum radius in card heights
 const LENS = 2.7; // perspective distance
-const RING_R = 1.14; // ring radius
+const RING_R = 1.05; // ring radius (keeps all cards comfortably inside container)
 const BOW = 1.82; // arc radius
-const TITLE = 0.082; // title size scale
-const INDEX = 0.038; // index list size scale
+const TITLE = 0.086; // title size scale
+const INDEX = 0.036; // index list size scale
 const CULL = 1.6; // distance threshold for rendering
 
-const WHEEL_UNITS = 900;
-const DRAG_UNITS = 420;
-const SETTLE = 140;
+/** Sensitivity for wheel notches and drag pixels */
+const WHEEL_UNITS = 650;
+const DRAG_UNITS = 380;
+/** Quiet time before snapping to whole integer item */
+const SETTLE = 180;
+/** Fraction of remaining distance closed each frame */
 const EASE = 0.12;
 
 const clamp = (v: number, lo: number, hi: number) =>
@@ -70,7 +74,7 @@ function place(
 
 export function WorksWheel({
   items,
-  label = "Works '26",
+  label = "Projects '26",
   action = "View Project",
   className,
   ...props
@@ -81,14 +85,32 @@ export function WorksWheel({
   const labelRef = React.useRef<HTMLDivElement>(null);
   const titleRef = React.useRef<HTMLDivElement>(null);
 
+  // Position refs for 60fps RAF loop
   const turn = React.useRef(0);
   const target = React.useRef(0);
   const [active, setActive] = React.useState(0);
+  const [isRing, setIsRing] = React.useState(true);
   const [stage, setStage] = React.useState<Stage>({ w: 0, h: 0 });
 
   const count = items.length;
   const last = Math.max(count - 1, 0);
 
+  // Router navigation helper
+  let navigate: ((to: string) => void) | null = null;
+  try {
+    navigate = useNavigate();
+  } catch {
+    navigate = null;
+  }
+
+  // Synchronize target and active bounds when items change
+  React.useEffect(() => {
+    target.current = clamp(target.current, 0, last + 1);
+    turn.current = clamp(turn.current, 0, last + 1);
+    setActive((prev) => clamp(prev, 0, last));
+  }, [last]);
+
+  // Reduced motion support
   const [reduced, setReduced] = React.useState(false);
   React.useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -98,6 +120,7 @@ export function WorksWheel({
     return () => query.removeEventListener("change", read);
   }, []);
 
+  // Stage size observer
   React.useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
@@ -110,9 +133,8 @@ export function WorksWheel({
 
   const metrics = React.useMemo(() => {
     const { w, h } = stage;
-    // Responsive card width factor: wider on mobile for maximum legibility
-    const maxWFactor = w < 640 ? 0.76 : w < 1024 ? 0.52 : 0.38;
-    const cardW = Math.min(h * CARD_H * CARD_RATIO, w * maxWFactor || 300);
+    const maxWFactor = w < 640 ? 0.72 : w < 1024 ? 0.48 : 0.35;
+    const cardW = Math.min(h * CARD_H * CARD_RATIO, w * maxWFactor || 280);
     const cardH = cardW / CARD_RATIO;
     const drumR = cardH * DRUM;
     const ringR = cardH * RING_R;
@@ -133,7 +155,7 @@ export function WorksWheel({
     };
   }, [stage, count]);
 
-  // One pass per frame: ease toward the target, then write every transform
+  // Animation frame loop: updates 3D transforms directly on DOM nodes
   React.useEffect(() => {
     if (!stage.h) return;
     let frame = 0;
@@ -175,8 +197,11 @@ export function WorksWheel({
 
       if (labelRef.current) labelRef.current.style.opacity = String(1 - m);
       if (titleRef.current) titleRef.current.style.opacity = String(m);
+
       const near = clamp(Math.round(pos), 0, last);
       setActive((prev) => (prev === near ? prev : near));
+      const currentlyRing = t < 0.35;
+      setIsRing((prev) => (prev === currentlyRing ? prev : currentlyRing));
     };
 
     frame = requestAnimationFrame(draw);
@@ -186,33 +211,86 @@ export function WorksWheel({
   const to = React.useCallback(
     (next: number) => {
       target.current = clamp(next, 0, last + 1);
+      if (stageRef.current) {
+        if (target.current <= 0.05 || target.current >= last + 0.95) {
+          stageRef.current.removeAttribute("data-lenis-prevent");
+        } else {
+          stageRef.current.setAttribute("data-lenis-prevent", "");
+        }
+      }
     },
     [last],
   );
 
+  const settling = React.useRef(0);
+
+  // Wheel event listener:
+  // - Turns cards smoothly while inside wheel bounds [0, last + 1]
+  // - Freely passes scroll through to Lenis when at the boundaries
+  // - Does NOT trap users scrolling back up from below
   React.useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
+
     const onWheel = (event: WheelEvent) => {
-      const next = target.current + event.deltaY / WHEEL_UNITS;
-      if (next > 0 && next < last + 1) event.preventDefault();
+      const delta = event.deltaY;
+      if (Math.abs(delta) < 0.2) return;
+
+      const cur = target.current;
+      const atTop = cur <= 0.05;
+      const atBottom = cur >= last + 0.95;
+
+      // 1. Boundary pass-through:
+      // At ring overview (0) scrolling up, or at last item scrolling down:
+      // Always let parent Lenis scroll smoothly without intercepting!
+      if ((atTop && delta < 0) || (atBottom && delta > 0)) {
+        if (el.hasAttribute("data-lenis-prevent")) {
+          el.removeAttribute("data-lenis-prevent");
+        }
+        return;
+      }
+
+      // 2. Prevent reverse scroll trap from below:
+      // If user was scrolling up past the section from below (cur >= last + 0.9 and delta < 0)
+      // and stage is not explicitly focused, allow smooth page scroll up
+      const isFocused = document.activeElement === el || el.contains(document.activeElement);
+      if (atBottom && delta < 0 && !isFocused) {
+        if (el.hasAttribute("data-lenis-prevent")) {
+          el.removeAttribute("data-lenis-prevent");
+        }
+        return;
+      }
+
+      // 3. Interactive wheel turning inside bounds:
+      if (!el.hasAttribute("data-lenis-prevent")) {
+        el.setAttribute("data-lenis-prevent", "");
+      }
+      event.preventDefault();
+
+      const next = clamp(cur + delta / WHEEL_UNITS, 0, last + 1);
       to(next);
+
+      // Settle cleanly on the nearest whole project item
       window.clearTimeout(settling.current);
-      settling.current = window.setTimeout(
-        () => to(Math.round(target.current)),
-        SETTLE,
-      );
+      settling.current = window.setTimeout(() => {
+        const rounded = Math.round(target.current);
+        to(rounded);
+        if (rounded <= 0 || rounded >= last + 1) {
+          el.removeAttribute("data-lenis-prevent");
+        }
+      }, SETTLE);
     };
+
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       el.removeEventListener("wheel", onWheel);
       window.clearTimeout(settling.current);
+      if (el) el.removeAttribute("data-lenis-prevent");
     };
   }, [to, last]);
 
   const drag = React.useRef<number | null>(null);
   const dragDistance = React.useRef<number>(0);
-  const settling = React.useRef(0);
 
   return (
     <section
@@ -235,6 +313,9 @@ export function WorksWheel({
           drag.current = event.clientY;
           dragDistance.current = 0;
           event.currentTarget.setPointerCapture(event.pointerId);
+          if (stageRef.current) {
+            stageRef.current.setAttribute("data-lenis-prevent", "");
+          }
         }}
         onPointerMove={(event) => {
           if (drag.current === null) return;
@@ -245,13 +326,21 @@ export function WorksWheel({
         }}
         onPointerUp={() => {
           drag.current = null;
-          if (target.current > 1) to(Math.round(target.current));
+          const rounded = Math.round(target.current);
+          if (target.current > 0.5) {
+            to(rounded);
+          } else {
+            to(0);
+          }
         }}
         onKeyDown={(event) => {
-          if (event.key === "ArrowDown") to(Math.round(target.current) + 1);
-          else if (event.key === "ArrowUp") to(Math.round(target.current) - 1);
-          else return;
-          event.preventDefault();
+          if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+            to(clamp(Math.round(target.current) + 1, 0, last + 1));
+            event.preventDefault();
+          } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+            to(clamp(Math.round(target.current) - 1, 0, last + 1));
+            event.preventDefault();
+          }
         }}
       >
         <div
@@ -268,9 +357,14 @@ export function WorksWheel({
                   aria-selected={i === active}
                   href={item.href}
                   onClick={(e) => {
-                    // Suppress click if user was dragging the wheel
+                    // Suppress click if user was dragging to rotate the wheel
                     if (dragDistance.current > 8) {
                       e.preventDefault();
+                      return;
+                    }
+                    if (item.href && item.href.startsWith("/") && navigate) {
+                      e.preventDefault();
+                      navigate(item.href);
                     }
                   }}
                   ref={(node: HTMLElement | null) => {
@@ -293,23 +387,11 @@ export function WorksWheel({
                     />
 
                     {/* Gradient overlay for contrast */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-70 group-hover:opacity-85 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 opacity-60 group-hover:opacity-80 transition-opacity" />
 
-                    {/* Card metadata (category & title on card) */}
-                    <div className="absolute left-3.5 bottom-3.5 right-3.5 text-white z-10">
-                      {item.category && (
-                        <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md inline-block mb-1.5 border border-white/20">
-                          {item.category}
-                        </span>
-                      )}
-                      <p className="text-xs sm:text-sm font-bold truncate leading-snug drop-shadow-sm">
-                        {item.title}
-                      </p>
-                    </div>
-
-                    {/* Action button affordance */}
+                    {/* Action button hover affordance */}
                     {action && item.href ? (
-                      <span className="bg-white/95 text-brand-dark pointer-events-none absolute right-3 top-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold opacity-0 backdrop-blur-md shadow-md border border-brand-border/50 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1">
+                      <span className="bg-white/95 text-brand-dark pointer-events-none absolute right-3 bottom-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold opacity-0 backdrop-blur-md shadow-md border border-brand-border/50 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1">
                         <svg
                           viewBox="0 0 12 12"
                           className="size-2.5"
@@ -344,25 +426,44 @@ export function WorksWheel({
         {label}
       </div>
 
-      {/* Active Project Title (shown when drum opens) */}
+      {/* Active Project Title (shown when drum opens, positioned cleanly on left) */}
       <div
         ref={titleRef}
-        className="pointer-events-none absolute top-1/2 left-[5%] sm:left-[8%] -translate-y-1/2 tracking-tight opacity-0 max-w-[28%] hidden md:block"
+        className="pointer-events-none absolute top-1/2 left-[5%] sm:left-[8%] -translate-y-1/2 tracking-tight opacity-0 max-w-[32%] hidden md:block"
         style={{ fontSize: metrics.title }}
       >
-        <span className="text-[11px] font-mono uppercase tracking-widest text-brand-secondary block mb-1">
+        <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-600 font-semibold block mb-1">
           Active Project [{String(active + 1).padStart(2, '0')}]
         </span>
         <h3 className="font-bold text-brand-dark leading-tight line-clamp-2">
           {items[active]?.title}
         </h3>
+        {items[active]?.category && (
+          <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider bg-zinc-100 text-brand-secondary border border-zinc-200">
+            {items[active]?.category}
+          </span>
+        )}
       </div>
 
-      {/* Quick Navigation Index on Right */}
+      {/* Quick Navigation Index on Right (Legible with ample space) */}
       <ol
-        className="text-zinc-400 absolute top-[6%] right-[3%] text-right leading-[1.8] hidden sm:block z-20 max-w-[200px]"
+        className="text-zinc-400 absolute top-[6%] right-[3%] text-right leading-[1.8] hidden sm:block z-20 max-w-[280px]"
         style={{ fontSize: metrics.index }}
       >
+        <li>
+          <button
+            type="button"
+            onClick={() => to(0)}
+            className={cn(
+              "focus-visible:outline-brand-dark cursor-pointer transition-colors outline-none focus-visible:outline-1 truncate block ml-auto hover:text-brand-dark text-[11px] sm:text-xs tracking-wider uppercase font-mono mb-1",
+              isRing
+                ? "text-brand-dark font-bold underline decoration-emerald-500 underline-offset-4"
+                : "text-zinc-400"
+            )}
+          >
+            00 · Ring Overview
+          </button>
+        </li>
         {items.map((item, i) => (
           <li key={item.title} className="truncate">
             <button
@@ -370,7 +471,9 @@ export function WorksWheel({
               onClick={() => to(i + 1)}
               className={cn(
                 "focus-visible:outline-brand-dark cursor-pointer transition-colors outline-none focus-visible:outline-1 truncate block ml-auto hover:text-brand-dark text-[11px] sm:text-xs",
-                i === active && "text-brand-dark font-bold underline decoration-brand-accent underline-offset-4",
+                !isRing && i === active
+                  ? "text-brand-dark font-bold underline decoration-emerald-500 underline-offset-4"
+                  : "text-zinc-400",
               )}
             >
               {String(i + 1).padStart(2, '0')} · {item.title}

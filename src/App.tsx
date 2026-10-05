@@ -5,6 +5,7 @@ import { CaseStudyPage } from '@/pages/CaseStudyPage';
 import { useLenis } from '@/hooks/useLenis';
 import { BackToTop } from '@/components/ui/back-to-top';
 import DefaultFooterDemo from '@/components/ui/demo';
+import WorksWheelDemo from '@/components/ui/works-wheel.demo';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/project/:slug" element={<CaseStudyPage />} />
         <Route path="/demo/footer" element={<DefaultFooterDemo />} />
+        <Route path="/demo/works-wheel" element={<WorksWheelDemo />} />
       </Routes>
     </AnimatePresence>
   );
