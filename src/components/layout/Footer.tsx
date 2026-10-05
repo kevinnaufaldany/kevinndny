@@ -109,16 +109,17 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Moving Striped CAD / Blueprint Texture Divider (Seamless Infinite Loop) */}
+      {/* Moving Striped CAD / Blueprint Texture Divider */}
       <motion.div
         aria-hidden="true"
         className="w-full h-8 sm:h-10 border-y border-zinc-200/80 opacity-20 bg-[repeating-linear-gradient(315deg,currentColor_0,currentColor_1px,transparent_0,transparent_50%)] text-zinc-900"
-        style={{ backgroundSize: "20px 20px" }}
-        animate={{ backgroundPositionX: ["0px", "40px"] }}
+        style={{ backgroundSize: "10px 10px" }}
+        initial={{ backgroundPositionX: "0%" }}
+        whileInView={{ backgroundPositionX: "100%" }}
+        viewport={{ once: true }}
         transition={{
           ease: "linear",
-          duration: 3,
-          repeat: Infinity,
+          duration: 20,
         }}
       />
 

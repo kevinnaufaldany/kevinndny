@@ -9,7 +9,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { Carousel360 } from '@/components/ui/image-fan-carousel';
+import { Carousel_003 } from '@/components/ui/skiper49';
 import { OrbitingSkills } from '@/components/ui/orbiting-skills';
 import { fadeInUp, staggerContainer } from '@/lib/motion';
 
@@ -176,23 +176,33 @@ export const CaseStudyPage: React.FC = () => {
           </div>
         </div>
 
-        {/* 3D Interactive Project Visuals Reel */}
+        {/* 3D Coverflow Project Visuals Reel (Skiper49) */}
         <section className="py-6 sm:py-8">
-          <div className="py-10 sm:py-14 px-3 sm:px-8 md:px-10 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-brand-surface/80 via-white to-brand-surface/40 border border-brand-border shadow-subtle overflow-hidden">
-            <div className="text-center mb-6 sm:mb-12 max-w-2xl mx-auto px-2">
-              <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-brand-secondary inline-block px-3 py-1 rounded-full bg-white border border-zinc-200 mb-2 shadow-xs">
-                3D Spatial Cylinder
+          <div className="py-8 sm:py-12 px-3 sm:px-6 md:px-8 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-brand-surface/90 via-white to-brand-surface/50 border border-brand-border/80 shadow-subtle overflow-hidden">
+            <div className="text-center mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
+              <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-emerald-600 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 mb-2 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Interactive 3D Coverflow Visuals
               </span>
               <h3 className="text-xl sm:text-3xl font-bold tracking-tight text-brand-dark mt-1">
-                Field Telemetry & Spatial Visuals
+                Field Telemetry & Inspection Reel
               </h3>
               <p className="text-xs sm:text-sm text-brand-secondary mt-1.5 sm:mt-2 leading-relaxed">
-                Rotate through the spatial cylinder to inspect high-resolution field captures, aerial telemetry, and automated crop boundary digitization.
+                High-resolution field captures, aerial telemetry, and engineering outputs. Auto-advances every 3s — or click any photo to advance or inspect.
               </p>
             </div>
             
-            <Carousel360 
-              imagesList={project.gallery && project.gallery.length > 0 ? project.gallery : [project.image]} 
+            <Carousel_003 
+              images={(project.gallery && project.gallery.length > 0 ? project.gallery : [project.image]).map((img, i) => ({
+                src: img,
+                alt: `${project.title} - Visual capture [${i + 1}]`,
+                title: `${project.title} · Capture ${String(i + 1).padStart(2, '0')}`,
+                caption: `${project.service} · Spatial inspection & domain verification.`
+              }))}
+              autoplay={true}
+              autoplayDelay={3000}
+              showPagination={true}
+              showNavigation={true}
             />
           </div>
         </section>
