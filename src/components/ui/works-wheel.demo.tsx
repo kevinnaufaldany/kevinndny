@@ -9,6 +9,8 @@ export default function WorksWheelDemo() {
     image: project.image,
     href: `/project/${project.slug}`,
     category: project.category,
+    summary: project.summary,
+    tags: project.tags,
   }));
 
   return (
