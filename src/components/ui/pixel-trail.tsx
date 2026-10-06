@@ -79,7 +79,7 @@ export function PixelCursorTrail({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`fixed inset-0 w-screen h-screen pointer-events-none overflow-hidden select-none z-[1] ${className}`}
+      className={`fixed inset-0 w-full h-full pointer-events-none overflow-hidden select-none z-[9999] ${className}`}
       aria-hidden="true"
     >
       {pixels.map((pixel) => {
@@ -90,7 +90,7 @@ export function PixelCursorTrail({ className = "" }: { className?: string }) {
         return (
           <div
             key={pixel.id}
-            className="absolute pointer-events-none bg-neutral-800/80 dark:bg-white/80 rounded-[1px] shadow-sm"
+            className="absolute pointer-events-none rounded-[1.5px] bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.7)]"
             style={{
               left: pixel.x - currentSize / 2,
               top: pixel.y - currentSize / 2,

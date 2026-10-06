@@ -129,7 +129,7 @@ export const CertificationsSection: React.FC = () => {
               key={cert.id}
               customSize
               glowColor="emerald"
-              className="p-6 rounded-2xl bg-white border border-brand-border/80 hover:border-emerald-500/40 shadow-subtle hover:shadow-[0_10px_30px_rgba(16,185,129,0.08)] group transition-all duration-300 flex flex-col justify-between"
+              className="p-6 rounded-2xl bg-white border border-brand-border/80 hover:border-emerald-500/50 shadow-subtle hover:shadow-[0_10px_30px_rgba(16,185,129,0.12)] group transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono text-brand-secondary">
@@ -148,7 +148,7 @@ export const CertificationsSection: React.FC = () => {
                 {cert.skills.map((s) => (
                   <span 
                     key={s}
-                    className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-zinc-50 border border-zinc-200 text-brand-secondary"
+                    className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-zinc-50 border border-zinc-200 text-brand-secondary group-hover:border-emerald-500/30 group-hover:bg-emerald-50/50 group-hover:text-emerald-700 transition-colors"
                   >
                     {s}
                   </span>

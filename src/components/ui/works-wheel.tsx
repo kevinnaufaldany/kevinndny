@@ -136,27 +136,27 @@ export function WorksWheel({
     const isSmallDesktop = w >= 1024 && w < 1280;
     const isLargeDesktop = w >= 1280;
 
-    let cardW = 320;
+    let cardW = 300;
     if (isMobile) {
-      // Mobile: center card fits within screen width with ample margin
-      cardW = clamp(w * 0.78, 230, 290);
+      // Mobile: tuned so 6 ring cards stay comfortably within screen boundaries without clipping
+      cardW = clamp(w * 0.65, 210, 260);
     } else if (isTablet) {
       // Tablet: comfortable proportions in vertical stack
-      cardW = clamp(w * 0.52, 280, 360);
+      cardW = clamp(w * 0.48, 250, 320);
     } else if (isSmallDesktop) {
-      // Small Desktop (1024-1279px): Bounded to 300px so Left (w-72) and Right (w-52) NEVER collide
-      const maxWByHeight = (h || 600) * 0.40 * CARD_RATIO;
-      cardW = clamp(Math.min(maxWByHeight, 300), 260, 300);
+      // Small Desktop (1024-1279px): Bounded to 270px to preserve wide breathing room between panels
+      const maxWByHeight = (h || 600) * 0.38 * CARD_RATIO;
+      cardW = clamp(Math.min(maxWByHeight, 270), 240, 270);
     } else {
-      // Large Desktop (>= 1280px): Generous presentation bounded within center 28% of stage
-      const maxWByHeight = (h || 600) * 0.44 * CARD_RATIO;
-      const maxWByWidth = w * 0.26;
-      cardW = clamp(Math.min(maxWByHeight, maxWByWidth), 320, 380);
+      // Large Desktop (>= 1280px): Balanced 320px presentation centered cleanly
+      const maxWByHeight = (h || 600) * 0.42 * CARD_RATIO;
+      const maxWByWidth = w * 0.24;
+      cardW = clamp(Math.min(maxWByHeight, maxWByWidth), 280, 340);
     }
 
     const cardH = cardW / CARD_RATIO;
     const drumR = cardH * DRUM;
-    const ringR = cardH * RING_R;
+    const ringR = isMobile ? cardH * 0.92 : cardH * RING_R;
     const ringScale = count
       ? clamp((((2 * Math.PI * ringR) / count) * 0.82) / (cardW || 1), 0.16, 1)
       : 1;
@@ -468,7 +468,7 @@ export function WorksWheel({
                   className={cn(
                     "relative block size-full overflow-hidden rounded-2xl transition-all duration-300",
                     isCurrent && !isRing
-                      ? "ring-2 ring-emerald-500 shadow-2xl shadow-emerald-500/20 scale-[1.02]"
+                      ? "ring-2 ring-[#10b981] shadow-2xl shadow-[#10b981]/25 scale-[1.02]"
                       : "border border-zinc-200/90 shadow-md opacity-85 hover:opacity-100 hover:border-zinc-300"
                   )}
                 >
@@ -485,7 +485,7 @@ export function WorksWheel({
                   {/* Active Card Category & Counter Badge */}
                   {isCurrent && !isRing && (
                     <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 text-[10px] font-mono tracking-wider uppercase">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                       <span>{String(i + 1).padStart(2, "0")} · {item.category || "Project"}</span>
                     </div>
                   )}
@@ -509,11 +509,11 @@ export function WorksWheel({
                               navigate(item.href);
                             }
                           }}
-                          className="shrink-0 bg-white text-brand-dark hover:bg-emerald-400 hover:text-black active:scale-95 transition-all flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold shadow-lg border border-brand-border/40 cursor-pointer"
+                          className="shrink-0 bg-white text-brand-dark hover:bg-[#10b981] hover:text-white active:scale-95 transition-all flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold shadow-lg border border-brand-border/40 cursor-pointer"
                           aria-label={`View case study for ${item.title}`}
                         >
                           <span>{action}</span>
-                          <ArrowUpRight className="size-3.5 text-emerald-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                          <ArrowUpRight className="size-3.5 text-[#10b981] group-hover:text-white transition-colors" />
                         </button>
                       )}
                     </div>
@@ -522,7 +522,7 @@ export function WorksWheel({
                   {/* Hover Affordance in Ring Overview */}
                   {isRing && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-xs text-white text-center">
-                      <span className="text-[10px] font-mono uppercase text-emerald-400 font-semibold mb-0.5">
+                      <span className="text-[10px] font-mono uppercase text-[#10b981] font-semibold mb-0.5">
                         {item.category || "Project"}
                       </span>
                       <span className="text-xs font-bold truncate max-w-[90%] mb-1.5">
@@ -530,7 +530,7 @@ export function WorksWheel({
                       </span>
                       <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-brand-dark text-[11px] font-semibold shadow-md">
                         <span>Explore</span>
-                        <ArrowUpRight className="size-3 text-emerald-600" />
+                        <ArrowUpRight className="size-3 text-[#10b981]" />
                       </span>
                     </div>
                   )}
@@ -564,166 +564,160 @@ export function WorksWheel({
         </div>
       </div>
 
-      {/* LEFT COLUMN: Active Project Details & Prominent CTA (Desktop >= 1024px) */}
-      <div
-        className={cn(
-          "absolute left-4 lg:left-8 xl:left-12 top-1/2 -translate-y-1/2 z-20 pointer-events-auto transition-all duration-300 hidden lg:block",
-          "w-72 xl:w-96"
-        )}
-      >
-        {isRing ? (
-          <div className="space-y-3 p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-zinc-200/70 shadow-xs">
-            <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-700 font-semibold px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Featured Works Archive
-            </span>
-            <h3 className="text-xl xl:text-2xl font-black text-brand-dark tracking-tight uppercase leading-tight">
-              Selected Works & Case Studies
-            </h3>
-            <p className="text-xs xl:text-sm text-brand-secondary leading-relaxed">
-              Explore real-world engineering solutions in Computer Vision, Machine Learning, and Spatial GIS.
-            </p>
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => scrollToItem(1)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-dark text-white text-xs font-semibold uppercase tracking-wider hover:bg-black transition-colors cursor-pointer group"
-              >
-                <span>Start Exploring</span>
-                <span className="group-hover:translate-y-0.5 transition-transform text-emerald-400">↓</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3.5 p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-zinc-200/80 shadow-sm transition-all duration-200">
-            {/* Project Index & Category Pill */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 font-semibold flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Project [{String(active + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}]
+      {/* DESKTOP HUD OVERLAY: Centered inside site's max-w-7xl grid, strictly aligned with header padding/margins */}
+      <div className="pointer-events-none absolute inset-0 max-w-7xl mx-auto px-4 sm:px-8 hidden lg:flex items-center justify-between z-20">
+        
+        {/* LEFT COLUMN: Active Project Details & Prominent CTA (Desktop >= 1024px) */}
+        <div className="pointer-events-auto transition-all duration-300 w-64 xl:w-72 max-w-[285px]">
+          {isRing ? (
+            <div className="space-y-2.5 p-4 rounded-2xl bg-white/90 backdrop-blur-md border border-brand-border/80 shadow-xs">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/70">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                Featured Works Archive
               </span>
-              {activeItem?.category && (
-                <span className="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200">
-                  {activeItem?.category}
-                </span>
-              )}
-            </div>
-
-            {/* Title */}
-            <h3 className="text-lg xl:text-2xl font-black text-brand-dark tracking-tight uppercase leading-tight line-clamp-2">
-              {activeItem?.title}
-            </h3>
-
-            {/* Summary */}
-            {activeItem?.summary && (
-              <p className="text-xs xl:text-sm text-brand-secondary leading-relaxed line-clamp-3">
-                {activeItem?.summary}
+              <h3 className="text-base font-bold text-brand-dark tracking-tight uppercase leading-snug">
+                Selected Works & Case Studies
+              </h3>
+              <p className="text-xs text-brand-secondary leading-relaxed font-normal">
+                Explore real-world engineering solutions in Computer Vision, Machine Learning, and Spatial GIS.
               </p>
-            )}
-
-            {/* Tags */}
-            {activeItem?.tags && activeItem?.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {activeItem?.tags?.slice(0, 4).map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 border border-zinc-200/80"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Prominent VIEW PROJECT Call-to-Action Button */}
-            {activeItem?.href && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (activeItem?.href && navigate) {
-                      navigate(activeItem.href);
-                    }
-                  }}
-                  className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-brand-dark text-white hover:bg-black font-semibold text-xs tracking-wider uppercase transition-all duration-200 shadow-md hover:shadow-xl hover:gap-3.5 group cursor-pointer"
+                  onClick={() => scrollToItem(1)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-brand-dark text-white text-[11px] font-semibold tracking-wider hover:bg-black transition-colors cursor-pointer group"
                 >
-                  <span>View Project Case Study</span>
-                  <ArrowUpRight className="size-3.5 text-emerald-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <span>Start Exploring</span>
+                  <span className="group-hover:translate-y-0.5 transition-transform text-[#10b981]">↓</span>
                 </button>
               </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* RIGHT COLUMN: Quick Navigation Index (Desktop >= 1024px) */}
-      <div
-        className={cn(
-          "absolute right-4 lg:right-8 xl:right-12 top-1/2 -translate-y-1/2 z-20 pointer-events-auto transition-all duration-300 hidden lg:block",
-          "w-52 xl:w-72"
-        )}
-      >
-        <div className="text-right p-3.5 xl:p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-zinc-200/70 shadow-xs">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-2 border-b border-zinc-200/80 pb-1.5 flex items-center justify-between">
-            <span className="text-emerald-700 font-semibold">{String(count).padStart(2, "0")} Archive Items</span>
-            <span>Jump to</span>
-          </div>
-
-          <ol className="space-y-1">
-            <li>
-              <button
-                type="button"
-                onClick={() => scrollToItem(0)}
-                className={cn(
-                  "w-full text-right py-1 px-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200 flex items-center justify-end gap-2 group cursor-pointer",
-                  isRing
-                    ? "bg-zinc-100 text-brand-dark font-bold border-r-2 border-emerald-500"
-                    : "text-zinc-400 hover:text-brand-dark hover:bg-zinc-50"
+            </div>
+          ) : (
+            <div className="space-y-2.5 p-4 rounded-2xl bg-white/90 backdrop-blur-md border border-brand-border/80 shadow-xs transition-all duration-200">
+              {/* Project Index & Category Pill */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                  Project [{String(active + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}]
+                </span>
+                {activeItem?.category && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200/80">
+                    {activeItem?.category}
+                  </span>
                 )}
-              >
-                <span>00 · Ring Overview</span>
-                {isRing && <span className="size-1.5 rounded-full bg-emerald-500 shrink-0" />}
-              </button>
-            </li>
-            {items.map((item, i) => {
-              const isSelected = !isRing && i === active;
-              return (
-                <li key={item.title}>
+              </div>
+
+              {/* Title - Refined, clear, never oversized */}
+              <h3 className="text-sm xl:text-base font-bold text-brand-dark tracking-tight leading-snug line-clamp-2">
+                {activeItem?.title}
+              </h3>
+
+              {/* Summary */}
+              {activeItem?.summary && (
+                <p className="text-xs text-brand-secondary leading-relaxed line-clamp-2 xl:line-clamp-3 font-normal">
+                  {activeItem?.summary}
+                </p>
+              )}
+
+              {/* Tags */}
+              {activeItem?.tags && activeItem?.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-0.5">
+                  {activeItem?.tags?.slice(0, 3).map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200/60"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Prominent VIEW CASE STUDY Call-to-Action Button */}
+              {activeItem?.href && (
+                <div className="pt-1">
                   <button
                     type="button"
-                    onClick={() => scrollToItem(i + 1)}
-                    className={cn(
-                      "w-full text-right py-1 px-2 rounded-lg text-xs transition-all duration-200 flex items-center justify-end gap-2 group cursor-pointer truncate",
-                      isSelected
-                        ? "bg-zinc-100 text-brand-dark font-bold border-r-2 border-emerald-500"
-                        : "text-zinc-400 hover:text-brand-dark hover:bg-zinc-50"
-                    )}
+                    onClick={() => {
+                      if (activeItem?.href && navigate) {
+                        navigate(activeItem.href);
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-brand-dark text-white hover:bg-black font-semibold text-[11px] tracking-wider uppercase transition-all duration-200 shadow-xs hover:gap-2 group cursor-pointer"
                   >
-                    <span className="truncate max-w-[200px]">
-                      <span className="font-mono text-[11px] mr-1.5 text-zinc-400 group-hover:text-brand-dark">
-                        {String(i + 1).padStart(2, "0")} ·
-                      </span>
-                      {item.title}
-                    </span>
-                    {isSelected && (
-                      <span className="size-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    )}
+                    <span>View Case Study</span>
+                    <ArrowUpRight className="size-3 text-[#10b981] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </button>
-                </li>
-              );
-            })}
-          </ol>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN: Quick Navigation Index (Desktop >= 1024px) */}
+        <div className="pointer-events-auto transition-all duration-300 w-44 xl:w-52 max-w-[215px]">
+          <div className="text-right p-3 rounded-2xl bg-white/90 backdrop-blur-md border border-brand-border/80 shadow-xs">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-400 mb-1.5 border-b border-zinc-200/80 pb-1 flex items-center justify-between">
+              <span className="text-emerald-700 font-semibold">{String(count).padStart(2, "0")} Archives</span>
+              <span>Jump to</span>
+            </div>
+
+            <ol className="space-y-0.5">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollToItem(0)}
+                  className={cn(
+                    "w-full text-right py-1 px-1.5 rounded-lg text-[11px] font-mono uppercase tracking-wider transition-all duration-150 flex items-center justify-end gap-1.5 group cursor-pointer",
+                    isRing
+                      ? "bg-zinc-100 text-brand-dark font-bold border-r-2 border-[#10b981]"
+                      : "text-zinc-400 hover:text-brand-dark hover:bg-zinc-50"
+                  )}
+                >
+                  <span>00 · Ring Overview</span>
+                  {isRing && <span className="size-1.5 rounded-full bg-[#10b981] shrink-0" />}
+                </button>
+              </li>
+              {items.map((item, i) => {
+                const isSelected = !isRing && i === active;
+                return (
+                  <li key={item.title}>
+                    <button
+                      type="button"
+                      onClick={() => scrollToItem(i + 1)}
+                      className={cn(
+                        "w-full text-right py-1 px-1.5 rounded-lg text-[11px] transition-all duration-150 flex items-center justify-end gap-1.5 group cursor-pointer truncate",
+                        isSelected
+                          ? "bg-zinc-100 text-brand-dark font-bold border-r-2 border-[#10b981]"
+                          : "text-zinc-400 hover:text-brand-dark hover:bg-zinc-50"
+                      )}
+                    >
+                      <span className="truncate max-w-[170px]">
+                        <span className="font-mono text-[10px] mr-1 text-zinc-400 group-hover:text-brand-dark">
+                          {String(i + 1).padStart(2, "0")} ·
+                        </span>
+                        {item.title}
+                      </span>
+                      {isSelected && (
+                        <span className="size-1.5 rounded-full bg-[#10b981] shrink-0" />
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
       </div>
 
       {/* MOBILE & TABLET: Active Project Floating Dock Bar (< 1024px) */}
-      {/* Positioned with right-20 clearance so it NEVER collides with BackToTop button (fixed bottom-6 right-6) */}
-      <div className="absolute left-4 right-20 sm:left-8 sm:right-24 bottom-3 sm:bottom-4 z-20 pointer-events-auto block lg:hidden">
+      {/* Positioned with right-16 clearance so it NEVER collides with BackToTop button (fixed bottom-6 right-6) */}
+      <div className="absolute left-4 right-16 sm:left-6 sm:right-20 bottom-3 sm:bottom-4 z-20 pointer-events-auto block lg:hidden">
         <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-brand-border/90 p-3 shadow-lg max-w-md">
           {isRing ? (
             <div className="flex items-center justify-between gap-2.5">
               <div className="min-w-0">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-600 font-semibold block">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold block">
                   Ring Overview
                 </span>
                 <p className="text-xs font-bold text-brand-dark truncate">
@@ -733,7 +727,7 @@ export function WorksWheel({
               <button
                 type="button"
                 onClick={() => scrollToItem(1)}
-                className="shrink-0 px-3.5 py-1.5 rounded-full bg-brand-dark text-white font-medium text-xs flex items-center gap-1 cursor-pointer"
+                className="shrink-0 px-3 py-1.5 rounded-full bg-brand-dark text-white font-medium text-xs flex items-center gap-1 cursor-pointer"
               >
                 <span>Start</span>
                 <span>↓</span>
@@ -743,8 +737,8 @@ export function WorksWheel({
             <div>
               {/* Category & Project Counter Row */}
               <div className="flex items-center justify-between gap-2 text-[10px] font-mono uppercase text-zinc-500 mb-1">
-                <span className="flex items-center gap-1.5 text-emerald-600 font-semibold truncate">
-                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="flex items-center gap-1.5 text-emerald-700 font-semibold truncate">
+                  <span className="size-1.5 rounded-full bg-[#10b981] animate-pulse shrink-0" />
                   <span>Project {String(active + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}</span>
                 </span>
                 {activeItem?.category && (
@@ -771,7 +765,7 @@ export function WorksWheel({
                     className="shrink-0 flex items-center gap-1 py-1.5 px-3 rounded-full bg-brand-dark text-white font-semibold text-[11px] tracking-wider uppercase shadow-xs active:scale-95 transition-transform cursor-pointer"
                   >
                     <span>View</span>
-                    <ArrowUpRight className="size-3 text-emerald-400" />
+                    <ArrowUpRight className="size-3 text-[#10b981]" />
                   </button>
                 )}
               </div>
@@ -786,7 +780,7 @@ export function WorksWheel({
                     className={cn(
                       "size-1.5 rounded-full transition-all duration-200 cursor-pointer",
                       !isRing && i === active
-                        ? "w-4 bg-emerald-500"
+                        ? "w-4 bg-[#10b981]"
                         : "bg-zinc-300 hover:bg-zinc-400"
                     )}
                     aria-label={`Go to project ${i + 1}`}
@@ -798,24 +792,26 @@ export function WorksWheel({
         </div>
       </div>
 
-      {/* Bottom Scroll Progress & Status Bar (Desktop) */}
-      <div className="absolute bottom-2 inset-x-0 z-20 pointer-events-none hidden lg:flex items-center justify-between px-8 xl:px-12 text-[10px] font-mono uppercase tracking-wider text-zinc-400">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Scroll down to explore projects
-        </span>
+      {/* Bottom Scroll Progress & Status Bar (Desktop): Aligned strictly with site's max-w-7xl grid */}
+      <div className="absolute bottom-2 inset-x-0 z-20 pointer-events-none hidden lg:block">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-1.5 rounded-full bg-[#10b981] animate-pulse" />
+            Scroll down to explore projects
+          </span>
 
-        {/* Continuous Progress Bar */}
-        <div className="w-36 xl:w-48 h-1 bg-zinc-200/80 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-emerald-500 transition-[width] duration-150 ease-out"
-            style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-          />
+          {/* Continuous Progress Bar */}
+          <div className="w-36 xl:w-48 h-1 bg-zinc-200/80 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#10b981] transition-[width] duration-150 ease-out"
+              style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+            />
+          </div>
+
+          <span>
+            {isRing ? `00 / ${String(count).padStart(2, "0")}` : `${String(active + 1).padStart(2, "0")} / ${String(count).padStart(2, "0")}`}
+          </span>
         </div>
-
-        <span>
-          {isRing ? `00 / ${String(count).padStart(2, "0")}` : `${String(active + 1).padStart(2, "0")} / ${String(count).padStart(2, "0")}`}
-        </span>
       </div>
     </div>
   );

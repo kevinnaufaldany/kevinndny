@@ -70,12 +70,12 @@ export const ProjectsSection: React.FC = () => {
         
         {/* Section Header: positioned with safe clearance under fixed navbar */}
         <div className="pt-20 sm:pt-24 pb-2 px-4 sm:px-8 max-w-7xl mx-auto w-full shrink-0 z-30 relative">
-          {/* Subtle Watermark Backdrop */}
+          {/* Subtle Watermark Backdrop: safely positioned below fixed navbar and centered behind header row */}
           <div
-            className="w-full flex justify-center items-center pointer-events-none select-none absolute top-1/2 -translate-y-1/2 left-0 right-0 overflow-hidden opacity-30 sm:opacity-40"
+            className="w-full flex justify-center items-center pointer-events-none select-none absolute top-12 sm:top-14 md:top-16 left-0 right-0 overflow-hidden opacity-25 sm:opacity-35"
             aria-hidden="true"
           >
-            <span className="text-6xl sm:text-8xl md:text-9xl font-black uppercase tracking-tight text-neutral-200 select-none">
+            <span className="text-6xl sm:text-8xl md:text-9xl font-black uppercase tracking-tight text-neutral-200/90 select-none leading-none block whitespace-nowrap">
               PORTFOLIO
             </span>
           </div>

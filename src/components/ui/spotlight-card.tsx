@@ -13,15 +13,15 @@ interface GlowCardProps {
   customSize?: boolean; // When true, ignores size prop and uses width/height or className
 }
 
-const glowColorMap: Record<GlowColor, { base: number; spread: number; saturation: number; lightness?: number }> = {
-  zinc: { base: 0, spread: 0, saturation: 0 },
-  monochrome: { base: 0, spread: 0, saturation: 0 },
-  emerald: { base: 158, spread: 40, saturation: 85, lightness: 48 }, // AWS Emerald theme
-  green: { base: 158, spread: 40, saturation: 85, lightness: 48 },
-  blue: { base: 220, spread: 200, saturation: 100 },
-  purple: { base: 280, spread: 300, saturation: 100 },
-  red: { base: 0, spread: 200, saturation: 100 },
-  orange: { base: 30, spread: 200, saturation: 100 },
+const glowColorMap: Record<GlowColor, { base: number; spread: number; saturation: number; lightness?: number; rgb?: string }> = {
+  zinc: { base: 0, spread: 0, saturation: 0, rgb: '113, 113, 122' },
+  monochrome: { base: 0, spread: 0, saturation: 0, rgb: '24, 24, 27' },
+  emerald: { base: 160, spread: 0, saturation: 84, lightness: 39, rgb: '16, 185, 129' }, // #10b981 (emerald-500)
+  green: { base: 160, spread: 0, saturation: 84, lightness: 39, rgb: '16, 185, 129' },   // #10b981 (emerald-500)
+  blue: { base: 220, spread: 200, saturation: 100, rgb: '59, 130, 246' },
+  purple: { base: 280, spread: 300, saturation: 100, rgb: '168, 85, 247' },
+  red: { base: 0, spread: 200, saturation: 100, rgb: '239, 68, 68' },
+  orange: { base: 30, spread: 200, saturation: 100, rgb: '249, 115, 22' },
 };
 
 const sizeMap = {
@@ -60,6 +60,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
   const colorConfig = glowColorMap[glowColor] || glowColorMap.monochrome;
   const isMonochrome = colorConfig.saturation === 0;
+  const isEmerald = glowColor === 'emerald' || glowColor === 'green';
 
   // Determine sizing
   const getSizeClasses = () => {
@@ -70,6 +71,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
   };
 
   const getInlineStyles = () => {
+    const rgbStr = colorConfig.rgb || '16, 185, 129';
     const baseStyles: React.CSSProperties & Record<string, any> = {
       '--base': colorConfig.base,
       '--spread': colorConfig.spread,
@@ -80,14 +82,15 @@ const GlowCard: React.FC<GlowCardProps> = ({
       '--backup-border': 'rgba(228, 228, 231, 0.7)',
       '--size': '240',
       '--outer': '1',
+      '--glow-rgb': rgbStr,
       '--border-size': 'calc(var(--border, 1.5) * 1px)',
       '--spotlight-size': 'calc(var(--size, 240) * 1px)',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
-      '--bg-spot-opacity': isMonochrome ? '0.04' : (colorConfig.saturation > 0 ? '0.09' : '0.1'),
-      '--border-spot-opacity': isMonochrome ? '0.45' : '0.85',
-      '--border-light-opacity': isMonochrome ? '0.6' : '0.8',
+      '--bg-spot-opacity': isMonochrome ? '0.04' : (isEmerald ? '0.1' : '0.09'),
+      '--border-spot-opacity': isMonochrome ? '0.45' : (isEmerald ? '0.9' : '0.85'),
+      '--border-light-opacity': isMonochrome ? '0.6' : (isEmerald ? '0.3' : '0.8'),
       '--lightness': isMonochrome ? '22%' : `${colorConfig.lightness || 65}%`,
-      '--glow-filter': isMonochrome ? 'none' : 'brightness(1.6)',
+      '--glow-filter': isEmerald ? 'none' : (isMonochrome ? 'none' : 'brightness(1.6)'),
       backgroundImage: isMonochrome
         ? `radial-gradient(
             var(--spotlight-size) var(--spotlight-size) at
@@ -95,19 +98,26 @@ const GlowCard: React.FC<GlowCardProps> = ({
             calc(var(--y, 0) * 1px),
             rgba(24, 24, 27, var(--bg-spot-opacity, 0.04)), transparent 70%
           )`
-        : `radial-gradient(
-            var(--spotlight-size) var(--spotlight-size) at
-            calc(var(--x, 0) * 1px)
-            calc(var(--y, 0) * 1px),
-            hsl(var(--hue, 158) var(--saturation, 85%) var(--lightness, 48%) / var(--bg-spot-opacity, 0.09)), transparent 75%
-          )`,
+        : (isEmerald
+          ? `radial-gradient(
+              var(--spotlight-size) var(--spotlight-size) at
+              calc(var(--x, 0) * 1px)
+              calc(var(--y, 0) * 1px),
+              rgba(16, 185, 129, var(--bg-spot-opacity, 0.1)), transparent 75%
+            )`
+          : `radial-gradient(
+              var(--spotlight-size) var(--spotlight-size) at
+              calc(var(--x, 0) * 1px)
+              calc(var(--y, 0) * 1px),
+              hsl(var(--hue, 158) var(--saturation, 85%) var(--lightness, 48%) / var(--bg-spot-opacity, 0.09)), transparent 75%
+            )`),
       backgroundColor: 'var(--backdrop, transparent)',
       backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
       backgroundPosition: '50% 50%',
       backgroundAttachment: 'fixed',
       border: 'var(--border-size) solid var(--backup-border)',
       position: 'relative' as const,
-      touchAction: 'none' as const,
+      touchAction: 'pan-y' as const,
     };
 
     if (width !== undefined) {
@@ -146,7 +156,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
         calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
         calc(var(--x, 0) * 1px)
         calc(var(--y, 0) * 1px),
-        hsl(var(--hue, 0) var(--saturation, 0%) var(--lightness, 22%) / var(--border-spot-opacity, 0.45)), transparent 100%
+        rgba(var(--glow-rgb, 16, 185, 129), var(--border-spot-opacity, 0.75)), transparent 100%
       );
       filter: var(--glow-filter, none);
     }
@@ -156,7 +166,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
         calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
         calc(var(--x, 0) * 1px)
         calc(var(--y, 0) * 1px),
-        hsl(0 0% 100% / var(--border-light-opacity, 0.6)), transparent 100%
+        hsl(0 0% 100% / var(--border-light-opacity, 0.3)), transparent 100%
       );
     }
     
